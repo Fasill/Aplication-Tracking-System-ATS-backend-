@@ -1,3 +1,4 @@
+import router from "./router/userRouter"
 import express from 'express';
 import cors from 'cors';
 const app = express();
@@ -5,10 +6,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-
-app.get("/", (req, res) => {
-  res.end('Message: welcome');
-});
+app.use("/",router)
 
 const port =  8080; // Use the environment-provided port or 8080 as a fallback
 
