@@ -13,5 +13,9 @@ RUN npm install
 # Copy the rest of the application code to the container
 COPY . .
 
+ENV PORT=8080
+
+
+
 # Define the command to start your application
 CMD ["npm", "start"]
