@@ -1,4 +1,4 @@
-import router from "./router/userRouter"
+import router from "./router/userRouter.js"
 import express from 'express';
 import cors from 'cors';
 const app = express();
