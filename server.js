@@ -6,7 +6,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-app.use("/",router)
+app.use(router)
 
 const port =  8080; // Use the environment-provided port or 8080 as a fallback
 
