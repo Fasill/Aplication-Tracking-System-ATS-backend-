@@ -1,9 +1,18 @@
 import bcrypt from "bcrypt"
 import {Users} from "../models/User.js"
 import {generateToken} from "../utils/tokenGenerator.js"
+
+
 export const signUp = async (req, res) => {
   try {
-    const { email, password, type } = req.body;
+    const { email,
+      password,
+      name,
+      company_Name,
+      dialingCode,
+      phoneNumber,
+      linkedinUrl ,
+      type} = req.body;
 
     // Hash the password before storing it
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -12,9 +21,18 @@ export const signUp = async (req, res) => {
       email,
       password: hashedPassword,
       type,
+      name,
+      company_Name,
+      dialingCode,
+      phoneNumber,
+      linkedinUrl,
+      verified :false
     });
+    const userSnapshot = await Users.where("email", "==", email).get();
+    const userDoc = userSnapshot.docs[0];
+    const userId = userDoc.id;
 
-    res.status(201).json({ message: 'User data saved successfully.' });
+    res.status(201).json({ message: 'User data saved successfully.',token:`${generateToken(userId)}` });
   } catch (error) {
     console.error('Error saving user data:', error);
     res.status(500).json({ error: 'Internal Server Error' });
@@ -103,3 +121,4 @@ export const searchUser = (req, res) => {
 export const verify = (req, res)=>{
   res.send({message:"allgood"})
 }
+

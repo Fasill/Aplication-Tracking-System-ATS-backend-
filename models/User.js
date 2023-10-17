@@ -16,4 +16,9 @@ const firebaseConfig = {
 admin.initializeApp(firebaseConfig);
 
 const db = admin.firestore();
+
+
+
+
+export const otpRef  = db.collection("otp")
 export const Users = db.collection('User')
