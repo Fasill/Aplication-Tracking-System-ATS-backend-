@@ -49,7 +49,7 @@ export const send_otp = async (req, res) => {
 
     const email = userDoc.data().email; // Retrieve the user's email from the user document
     const otp = Math.floor(100000 + Math.random() * 900000);
-
+    console.log(otp)
     await otpRef.doc(email).set({ otp });
 
     const emailSent = await sendOtpEmail(email, otp);
