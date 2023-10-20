@@ -65,6 +65,7 @@ export const login = async (req, res) => {
 
       if (passwordMatch) {
         const userId = userDoc.id;
+        console.log(generateToken(userId))
         return res.status(200).json({ message: "Logged in", token:`${generateToken(userId)}` });
       } else {
         return res.status(401).json({ message: "Authentication failed. Incorrect password." });

@@ -1,12 +1,12 @@
 import bcrypt from 'bcrypt';
 import { Users } from '../models/User.js';
-import { generateToken } from '../utils/tokenGenerator.js';
+import { generateToken,generateTokenforOtpVerificationpage } from '../utils/tokenGenerator.js';
 import { otpRef } from '../models/User.js';
 import nodemailer from 'nodemailer';
 import { decodeTokenAndGetId } from '../utils/decodeTokenAndGetId.js';
 
 // Function to send an OTP email
-async function sendOtpEmail(email, otp) {
+const sendOtpEmail = async (email, otp) => {
   try {
     // Create a transporter using your email service provider's SMTP settings
     const transporter = nodemailer.createTransport({
@@ -36,9 +36,11 @@ async function sendOtpEmail(email, otp) {
   }
 }
 
+
 export const send_otp = async (req, res) => {
   const { token } = req.body;
   const userId = decodeTokenAndGetId(token);
+  const otpverifyToken = generateTokenforOtpVerificationpage(userId)
 
   try {
     const userDoc = await Users.doc(userId).get();
@@ -55,7 +57,9 @@ export const send_otp = async (req, res) => {
     const emailSent = await sendOtpEmail(email, otp);
 
     if (emailSent) {
-      res.send('Email sent');
+
+      res.send({"otpverifyToken":otpverifyToken,message:'Email sent'});
+
     } else {
       res.status(500).send('Error sending email');
     }

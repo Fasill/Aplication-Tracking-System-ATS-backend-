@@ -22,3 +22,24 @@ export const requireAuth = (req, res, next) => {
   });
 }
 
+
+// Middleware to verify token
+export const requireAuth1 = (req, res, next) => {
+  const token = req.body.otpverifyToken;
+  console.log("goot",token)
+  if (!token) {
+    console.log("token", token)
+    return res.json({ message: 'No token provided' });
+  }
+  
+  jwt.verify(token, 'serivangoOtpVerification', (err, decodedToken) => {
+    if (err) {
+      return res.status(401).json({ message: 'Invalid token' });
+    }
+    
+    req.userId = decodedToken.id;
+    next();
+  });
+}
+
+
