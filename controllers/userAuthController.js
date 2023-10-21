@@ -5,19 +5,29 @@ import {generateToken} from "../utils/tokenGenerator.js"
 
 export const signUp = async (req, res) => {
   try {
-    const { email,
+    const {
+      email,
       password,
       name,
       company_Name,
       dialingCode,
       phoneNumber,
-      linkedinUrl ,
-      type} = req.body;
+      linkedinUrl,
+      type
+    } = req.body;
+
+    // Check if the user with the same email already exists
+    const userSnapshot = await Users.where("email", "==", email).get();
+    if (userSnapshot.docs.length > 0) {
+      res.status(400).json({ message: 'User already registered.' });
+      return;
+    }
 
     // Hash the password before storing it
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    await Users.add({
+    // Add the user to the database
+    const userDoc = await Users.add({
       email,
       password: hashedPassword,
       type,
@@ -26,18 +36,21 @@ export const signUp = async (req, res) => {
       dialingCode,
       phoneNumber,
       linkedinUrl,
-      verified :false
+      verified: false
     });
-    const userSnapshot = await Users.where("email", "==", email).get();
-    const userDoc = userSnapshot.docs[0];
+
     const userId = userDoc.id;
 
-    res.status(201).json({ message: 'User data saved successfully.',token:`${generateToken(userId)}` });
+    // Generate a token for the user
+    const token = generateToken(userId);
+
+    res.status(201).json({ message: 'User data saved successfully.', token });
   } catch (error) {
     console.error('Error saving user data:', error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 };
+
 
 // LoginAsChannelPartner ,LoginAsEmployer,LoginAsSupplier
 
