@@ -1,5 +1,7 @@
 import bcrypt from 'bcrypt';
 import { Users } from '../models/User.js';
+import {Companies} from "../models/User.js"
+
 import { generateToken,generateTokenforOtpVerificationpage } from '../utils/tokenGenerator.js';
 import { otpRef } from '../models/User.js';
 import nodemailer from 'nodemailer';
@@ -43,7 +45,7 @@ export const send_otp = async (req, res) => {
   const otpverifyToken = generateTokenforOtpVerificationpage(userId)
 
   try {
-    const userDoc = await Users.doc(userId).get();
+    const userDoc = await Companies.doc(userId).get();
 
     if (!userDoc.exists) {
       return res.status(404).send('User not found');
@@ -74,8 +76,8 @@ export const verify_otp = async (req, res) => {
   const userId = decodeTokenAndGetId(token);
 
   try {
-    const userDoc = await Users.doc(userId).get();
-
+    const userDoc = await Companies.doc(userId).get();
+    console.log(userDoc)
     if (!userDoc.exists) {
       return res.status(404).send('User not found');
     }

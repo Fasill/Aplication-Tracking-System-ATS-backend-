@@ -1,5 +1,7 @@
 import bcrypt from "bcrypt"
 import {Users} from "../models/User.js"
+import {Companies} from "../models/User.js"
+
 import {generateToken} from "../utils/tokenGenerator.js"
 
 
@@ -7,35 +9,35 @@ export const signUp = async (req, res) => {
   try {
     const {
       email,
-      password,
-      name,
-      company_Name,
-      dialingCode,
       phoneNumber,
-      linkedinUrl,
+      name,
+      address,
+      city,
+      state,
+      country,
       type
     } = req.body;
 
     // Check if the user with the same email already exists
-    const userSnapshot = await Users.where("email", "==", email).get();
+    const userSnapshot = await Companies.where("email", "==", email).get();
     if (userSnapshot.docs.length > 0) {
       res.status(400).json({ message: 'User already registered.' });
       return;
     }
 
     // Hash the password before storing it
-    const hashedPassword = await bcrypt.hash(password, 10);
+    // Note: Since you're not taking a password input in the React form, you don't need to hash it here
 
     // Add the user to the database
-    const userDoc = await Users.add({
+    const userDoc = await Companies.add({
       email,
-      password: hashedPassword,
       type,
-      name,
-      company_Name,
-      dialingCode,
       phoneNumber,
-      linkedinUrl,
+      name,
+      address,
+      city,
+      state,
+      country,
       verified: false
     });
 

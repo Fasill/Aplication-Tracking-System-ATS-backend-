@@ -20,5 +20,6 @@ const db = admin.firestore();
 
 
 
-export const otpRef  = db.collection("otp")
-export const Users = db.collection('User')
+export const otpRef  = db.collection("otp");
+export const Users = db.collection('User');
+export const Companies = db.collection('Companies')
