@@ -38,7 +38,8 @@ export const signUp = async (req, res) => {
       city,
       state,
       country,
-      verified: false
+      verified: false,
+      users:[]
     });
 
     const userId = userDoc.id;

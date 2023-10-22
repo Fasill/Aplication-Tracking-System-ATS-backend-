@@ -3,6 +3,7 @@ import express from "express";
 import {signUp,update,login,searchUser,verify} from "../controllers/userAuthController.js";
 import {send_otp,verify_otp} from "../controllers/otpAndVerification.js";
 import {requireAuth,requireAuth1} from "../middleware/JwtMiddlewareToProtectHomePage.js";
+import {addMember,verifyOtpLink} from "../controllers/addUser.js"
 const router = express.Router()
 
 
@@ -21,5 +22,7 @@ router.get("/",(req,res)=>{
 router.post("/send-otp",send_otp);
 router.post("/verify-otp",verify_otp);
 router.post("/verifyOtp,",requireAuth1,verify)
+router.post("/adduser",addMember)
+router.get("/verifyuser",verifyOtpLink)
 
 export default router;
