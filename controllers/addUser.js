@@ -57,7 +57,7 @@ const sendOtpEmail = async (email, otp, compId) => {
       subject: 'Join Today!',
       html: `
         <p>You're invited to join our community, where opportunity awaits.</p>
-        <p>http://localhost:8080/verifyuser?key=${otp}&compId=${compId}&email=${email}</p>
+        <p>http://localhost:3000/verifyuser?&key=${otp}&compId=${compId}&email=${email}</p>
         <p>We can't wait to welcome you!</p>
       `,
     };
@@ -126,7 +126,7 @@ export const verifyOtpLink = async (req, res) => {
             if (otp === storedOTP) {
               const userV = querySnapshot.docs[0];
               userV.ref.update({ verified: true });
-              res.send('OTP verified successfully');
+              res.send({'message':'OTP verified successfully',"token":token});
             } else {
               res.status(401).send('Invalid OTP');
             }
