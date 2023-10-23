@@ -59,20 +59,26 @@ const sendOtp = async (email, token, res, compId) => {
     res.status(400).json({ error: error });
   }
 };
-
 export const loginByEmail = async (req, res) => {
-  const { email } = req.body;
-  const userSnapshot = await Users.where('email', '==', email).get();
-
-  if (userSnapshot.empty) {
-    res.send("No users found with the provided email.");
-  } else {
-    const userId = userSnapshot.docs[0].id;
-    const token = generateToken(userId);
-    sendOtp(email, token, res);
-  }
-};
-
+    const { email, role } = req.body;
+    const userSnapshot = await Users.where('email', '==', email).get();
+  
+    if (userSnapshot.empty) {
+      res.send("No users found with the provided email.");
+    } else {
+      const userDoc = userSnapshot.docs[0];
+      const userData = userDoc.data();
+      
+      if (userData.role === role) { // Check if the user's role matches the provided role
+        const userId = userDoc.id;
+        const token = generateToken(userId);
+        sendOtp(email, token, res);
+      } else {
+        res.send("User role does not match the provided role.");
+      }
+    }
+  };
+  
 export const verifyTokenLink = async (req, res) => {
     res.send({"message":"all good"})
 }
