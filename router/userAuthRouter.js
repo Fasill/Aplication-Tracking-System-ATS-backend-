@@ -2,8 +2,9 @@ import express from "express";
 
 import {signUp,update,login,searchUser,verify} from "../controllers/userAuthController.js";
 import {send_otp,verify_otp} from "../controllers/otpAndVerification.js";
-import {requireAuth,requireAuth1} from "../middleware/JwtMiddlewareToProtectHomePage.js";
+import {requireAuth,requireAuth1,emaillogintokenverification} from "../middleware/JwtMiddlewareToProtectHomePage.js";
 import {addMember,verifyOtpLink} from "../controllers/addUser.js"
+import {loginByEmail,verifyTokenLink} from '../controllers/loginByEmil.js'
 const router = express.Router()
 
 
@@ -25,4 +26,6 @@ router.post("/verifyOtp,",requireAuth1,verify)
 router.post("/adduser",addMember)
 router.get("/verifyuser",verifyOtpLink)
 
+router.post("/sendemailtologin",loginByEmail)
+router.get("/verifyLink",emaillogintokenverification,verifyTokenLink)
 export default router;

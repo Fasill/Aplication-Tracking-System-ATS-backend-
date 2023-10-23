@@ -1,4 +1,3 @@
-import bcrypt from 'bcrypt';
 import admin from "firebase-admin"
 import { Users } from '../models/User.js';
 import { Companies } from "../models/User.js"
@@ -138,3 +137,5 @@ export const verifyOtpLink = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
+

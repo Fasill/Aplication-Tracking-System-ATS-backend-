@@ -92,7 +92,6 @@ export const login = async (req, res) => {
     }
   }
 
-
 export const update = async(req,res)=>{
   const id = req.body.id
   try{
