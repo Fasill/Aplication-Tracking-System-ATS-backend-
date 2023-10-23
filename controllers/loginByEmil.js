@@ -1,4 +1,4 @@
-import { Users } from '../models/User.js';
+import { Users, Companies} from '../models/User.js';
 import { generateToken, generateTokenforOtpVerificationpage } from '../utils/tokenGenerator.js';
 import { otpRef } from '../models/User.js';
 import nodemailer from 'nodemailer';
@@ -59,7 +59,7 @@ const sendOtp = async (email, token, res, compId) => {
     res.status(400).json({ error: error });
   }
 };
-export const loginByEmail = async (req, res) => {
+export const loginByEmailMember = async (req, res) => {
     const { email, role } = req.body;
     const userSnapshot = await Users.where('email', '==', email).get();
   
@@ -82,3 +82,19 @@ export const loginByEmail = async (req, res) => {
 export const verifyTokenLink = async (req, res) => {
     res.send({"message":"all good"})
 }
+export const loginByEmailRecuireteragency = async (req, res) => {
+  const { email } = req.body;
+  const CompaniesSnapshot = await Companies.where('email', '==', email).get();
+
+  if (CompaniesSnapshot.empty) {
+    res.send("No users found with the provided email.");
+  } else {
+    const CompaniesDoc = CompaniesSnapshot.docs[0];
+    
+      const CompaniesId = CompaniesDoc.id;
+      const token = generateToken(CompaniesId);
+      sendOtp(email, token, res);
+    
+  }
+};
+
