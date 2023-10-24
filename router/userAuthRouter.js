@@ -4,7 +4,8 @@ import {signUp,update,login,searchUser,verify} from "../controllers/userAuthCont
 import {send_otp,verify_otp} from "../controllers/otpAndVerification.js";
 import {requireAuth,requireAuth1,emaillogintokenverification} from "../middleware/JwtMiddlewareToProtectHomePage.js";
 import {addMember,verifyOtpLink} from "../controllers/addUser.js"
-import {loginByEmailMember,verifyTokenLink,loginByEmailRecuireteragency} from '../controllers/loginByEmil.js'
+import {loginByEmailMember,verifyTokenLink,loginByEmailRecuireteragency} from '../controllers/loginByEmil.js';
+import { allInfo,searchMember } from "../controllers/retrieveInfo.js";
 const router = express.Router()
 
 
@@ -30,4 +31,8 @@ router.post("/sendemailtologin",loginByEmailMember)
 router.post("/sendemailtologinRecuireteragency",loginByEmailRecuireteragency)
 
 router.get("/verifyLink",emaillogintokenverification,verifyTokenLink)
+
+
+router.post("/allInfo",allInfo)
+router.post("/Searchmember",searchMember)
 export default router;

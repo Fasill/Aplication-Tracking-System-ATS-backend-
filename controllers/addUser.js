@@ -8,7 +8,7 @@ import { decodeTokenAndGetId } from '../utils/decodeTokenAndGetId.js';
 
 // Function to add a new member to a company
 export const addMember = async (req, res) => {
-  const { email, token } = req.body;
+  const { email, token,name } = req.body;
   const compId = decodeTokenAndGetId(token);
   console.log("Company ID:", compId);
   const userSnapshot = await Users.where("email", "==", email).get();
@@ -27,9 +27,11 @@ export const addMember = async (req, res) => {
   await companyRef.update(updateData);
 
   const userDoc = await Users.add({
+    name,
     email,
     role:"Recruiter",
     verified: false,
+    company :compId
     
   });
 
@@ -93,6 +95,8 @@ const sendOtp = async (email, res, compId) => {
 
 // Function to verify OTP link
 export const verifyOtpLink = async (req, res) => {
+
+
   var otp = req.query.key;
   otp = parseInt(otp, 10);
   console.log("Received OTP:", otp);
@@ -100,7 +104,12 @@ export const verifyOtpLink = async (req, res) => {
   console.log("Company ID:", compId);
   const email = req.query.email;
 
-  const token = generateToken(compId);
+  const userSnapshot = await Users.where('email', '==', email).get();
+  
+  const userDoc = userSnapshot.docs[0];
+    
+  const userId = userDoc.id;
+  const token = generateToken(userId);
   console.log("Generated Token:", token);
 
   try {
