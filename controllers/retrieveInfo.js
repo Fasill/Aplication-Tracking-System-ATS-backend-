@@ -58,7 +58,7 @@ export const searchMember = async(req,res)=>{
 };
 
 export const allInfo = async (req, res) => {
-  const { token } = req.body;
+  const token = req.query.token;
   const id = decodeTokenAndGetId(token);
 
   try {
@@ -86,5 +86,71 @@ export const allInfo = async (req, res) => {
     // Handle any potential errors, e.g., database connection issues
     console.error(error);
     res.status(500).json({ error: 'Internal server error' });
+  }
+};
+export const deleteuser = async (req, res) => {
+  const email = req.query.email;
+
+  try {
+    // Find and delete the user with the specified email from the Users collection
+    const userSnapshot = await Users.where('email', '==', email).get();
+
+    if (userSnapshot.empty) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Delete the user(s) found with the specified email from the Users collection
+    const deletePromises = [];
+    userSnapshot.forEach((userDoc) => {
+      deletePromises.push(Users.doc(userDoc.id).delete());
+    });
+
+    await Promise.all(deletePromises);
+
+    // Now, remove the user with the specified email from the user lists in the Companies collection
+    const companiesSnapshot = await Companies.where('user', 'array-contains', email).get();
+
+    const updatePromises = [];
+    companiesSnapshot.forEach((companyDoc) => {
+      const companyData = companyDoc.data();
+      if (companyData.user && companyData.user.includes(email)) {
+        // Remove the email from the user list
+        companyData.user = companyData.user.filter((userEmail) => userEmail !== email);
+        // Update the company document with the modified user list
+        updatePromises.push(Companies.doc(companyDoc.id).update(companyData));
+      }
+    });
+
+    await Promise.all(updatePromises);
+
+    return res.status(200).json({ message: 'User deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting user:', error);
+    return res.status(500).json({ message: 'Internal server error' });
+  }
+};
+export const updateMemberRole = async (req, res) => {
+  const { email, token, role } = req.body.data;
+  console.log(req.body.data)
+
+  try {
+    // Find the user by email
+    const userQuery = await Users.where('email', '==', email).get();
+
+    if (userQuery.empty) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Assuming there's only one user with this email, you can update the role
+    const userDoc = userQuery.docs[0];
+    const userRef = userDoc.ref;
+
+    // Update the user's role
+    await userRef.update({ role: role });
+
+    return res.status(200).json({ message: 'User role updated successfully' });
+  } catch (error) {
+    console.error('Error updating user role:', error);
+    return res.status(500).json({ message: 'Internal server error' });
   }
 };

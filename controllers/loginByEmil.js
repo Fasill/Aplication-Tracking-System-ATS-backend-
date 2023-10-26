@@ -25,10 +25,14 @@ const sendOtpEmail = async (email, token,Agency) => {
       subject: 'Secure Login Link',
       html: `
         <p>Click here to login:</p>
-        ${!Agency?`<p>http://localhost:3000/verifySupplier?&token=${token}</p>`:`<p>http://localhost:3000/verifySupplier?&token=${token}</p>`}
+        ${!Agency ?
+          `<a href="https://talent-tracker-ats-dszgwhplxa-el.a.run.app/verifySupplier?&token=${token}" style="display: inline-block; background-color: #0074b7; color: #fff; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Login Now</a>` :
+          `<a href="https://talent-tracker-ats-dszgwhplxa-el.a.run.app/verifySupplier?&token=${token}" style="display: inline-block; background-color: #0074b7; color: #fff; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Login Now</a>`
+        }
         <p>We can't wait to welcome you!</p>
       `,
     };
+    
     const info = await transporter.sendMail(mailOptions);
 
 
@@ -74,7 +78,7 @@ export const loginByEmailMember = async (req, res) => {
         const token = generateToken(userId);
         sendOtp(email, token, res,Agency);
       } else {
-        res.send("User role does not match the provided role.");
+        res.status(401).send("User role does not match the provided role.");
       }
     }
   };

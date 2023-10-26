@@ -25,8 +25,9 @@ const sendOtpEmail = async (email, otp) => {
       from: 'fasilhawultie19@gmail.com',
       to: email,
       subject: 'OTP Verification',
-      text: `Your OTP for verification is: ${otp}`,
+      html: `<p style="font-size: 24px; font-weight: bold;">Your OTP for verification is: <span style="color: #FF5733;">${otp}</span></p>`,
     };
+    
 
     // Send the email
     const info = await transporter.sendMail(mailOptions);

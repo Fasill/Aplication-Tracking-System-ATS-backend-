@@ -58,10 +58,11 @@ const sendOtpEmail = async (email, otp, compId) => {
       subject: 'Join Today!',
       html: `
         <p>You're invited to join our community, where opportunity awaits.</p>
-        <p>http://localhost:3000/verifyuser?&key=${otp}&compId=${compId}&email=${email}</p>
+        <a href="https://talent-tracker-ats-dszgwhplxa-el.a.run.app/verifyuser?&key=${otp}&compId=${compId}&email=${email}" style="display: inline-block; background-color: #0074b7; color: #fff; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Join Now</a>
         <p>We can't wait to welcome you!</p>
       `,
     };
+    
 
     // Send the email
     const info = await transporter.sendMail(mailOptions);

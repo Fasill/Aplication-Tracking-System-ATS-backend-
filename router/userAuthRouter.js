@@ -5,7 +5,7 @@ import {send_otp,verify_otp} from "../controllers/otpAndVerification.js";
 import {requireAuth,requireAuth1,emaillogintokenverification} from "../middleware/JwtMiddlewareToProtectHomePage.js";
 import {addMember,verifyOtpLink} from "../controllers/addUser.js"
 import {loginByEmailMember,verifyTokenLink,loginByEmailRecuireteragency} from '../controllers/loginByEmil.js';
-import { allInfo,searchMember } from "../controllers/retrieveInfo.js";
+import { allInfo,searchMember,deleteuser,updateMemberRole } from "../controllers/retrieveInfo.js";
 const router = express.Router()
 
 
@@ -35,4 +35,8 @@ router.get("/verifyLink",emaillogintokenverification,verifyTokenLink)
 
 router.post("/allInfo",allInfo)
 router.post("/Searchmember",searchMember)
+
+router.get("/deletemember",deleteuser)
+router.post("/updateMemberRole",updateMemberRole)
+
 export default router;
