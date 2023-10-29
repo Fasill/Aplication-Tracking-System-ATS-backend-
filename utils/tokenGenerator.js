@@ -12,8 +12,8 @@ export const generateToken = (userId) => {
   const token = jwt.sign({ id: userId }, secretKey, {
     expiresIn: '1h', // You can adjust the token expiration time as needed
   });
-  return token;
-};
+   return token;
+}; 
 export const generateTokenforOtpVerificationpage = (userId) => {
   try {
     const token = jwt.sign({ id: userId }, secretKey1, {
