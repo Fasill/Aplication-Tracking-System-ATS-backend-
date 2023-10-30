@@ -15,6 +15,7 @@ router.post("/update", update)
 router.post("/login",login);
 router.post("/verify",requireAuth,verify)
 router.get("/searchUser",searchUser);
+
 router.get("/",(req,res)=>{
   res.send({message:"hello there"})
 })

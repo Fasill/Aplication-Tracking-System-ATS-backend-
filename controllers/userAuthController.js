@@ -1,8 +1,9 @@
-import bcrypt from "bcrypt"
+import bcrypt, { hash } from "bcrypt"
 import {Users} from "../models/User.js"
 import {Companies} from "../models/User.js"
 
 import {generateToken} from "../utils/tokenGenerator.js"
+import { decodeTokenAndGetId } from '../utils/decodeTokenAndGetId.js';
 
 
 export const signUp = async (req, res) => {
@@ -58,7 +59,6 @@ export const signUp = async (req, res) => {
 };
 
 // LoginAsChannelPartner ,LoginAsEmployer,LoginAsSupplier
-
 export const login = async (req, res) => {
     const {email,password,role} = req.body;
     console.log("role",role)
@@ -93,25 +93,90 @@ export const login = async (req, res) => {
         return res.status(500).json({ error: "Internal Server Error" });
       }
 
-    }else{
+    }
+    else if(role === 'Admin'){
+
+
+        
+        if (!email || !password) {
+          return res.status(400).json({ error: "Email and password are required." });
+        }
+
+        try {
+          const userSnapshot = await Users.where("email", "==", email).get();
+          if (userSnapshot.empty) {
+            return res.status(404).json({ message: "User not found." });
+          }
+
+          const userDoc = userSnapshot.docs[0];
+          if (!userDoc.data().password){
+            return res.status(401).json({ message: "Unverified use try to login by email"});
+          }
+          const hashedPassword = userDoc.data().password;
+
+          const passwordMatch = await bcrypt.compare(password, hashedPassword);
+
+          if (passwordMatch) {
+            const userId = userDoc.id;
+            console.log(generateToken(userId))
+            return res.status(200).json({ message: "Logged in", token:`${generateToken(userId)}` });
+          } else {
+            return res.status(401).json({ message: "Authentication failed. Incorrect password." });
+          }
+        } catch (error) {
+          console.error("Error searching for user:", error);
+          return res.status(500).json({ error: "Internal Server Error" });
+        }
+
+
+    }
+    else{
         return res.status(404).json({ message: "User not found2." });
 
     }
   }
 
-export const update = async(req,res)=>{
-  const id = req.body.id
-  try{
-    console.log("before deleting ",req.body)
-    delete req.body.id
-    const data = req.body
-    await Users.doc(id).update(data);
-    console.log("after deleting ",req.body)
-
-    res.send({msg:"updated"})
-  }catch(e){console.log(e)}
-
-}
+  export const update = async (req, res) => {
+    const { token, email, name, phoneNumber, password } = req.body;
+    const userId = decodeTokenAndGetId(token);
+  
+    try {
+      const userRef = Users.doc(userId); // Get the document reference
+  
+      // Get the current data from the document
+      const userDoc = await userRef.get();
+  
+      if (userDoc.exists) {
+        const updatedData = {}; // Create an object to store updated fields
+  
+        if (email !== undefined && email !== "") {
+          updatedData.email = email;
+        }
+        if (name !== undefined && name !== "") {
+          updatedData.name = name;
+        }
+        if (phoneNumber !== undefined && phoneNumber !== "") {
+          updatedData.phoneNumber = phoneNumber;
+        }
+        if (password !== undefined && password !== "") {
+          // Hash the password before storing it
+          const saltRounds = 10;
+          const hashedPassword = await bcrypt.hash(password, saltRounds);
+          updatedData.password = hashedPassword;
+        }
+  
+        await userRef.update(updatedData); // Update the document reference
+  
+        res.status(200).json({ message: 'User data updated successfully' });
+      } else {
+        res.status(404).json({ error: 'User not found' });
+      }
+    } catch (e) {
+      console.log(e);
+      res.status(500).json({ error: 'An error occurred while updating user data' });
+    }
+  };
+  
 
 
 export const searchUser = (req, res) => {
