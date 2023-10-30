@@ -11,6 +11,7 @@ export const signUp = async (req, res) => {
       email,
       phoneNumber,
       name,
+      password,
       address,
       city,
       state,
@@ -26,20 +27,22 @@ export const signUp = async (req, res) => {
     }
 
     // Hash the password before storing it
-    // Note: Since you're not taking a password input in the React form, you don't need to hash it here
+    const saltRounds = 10;
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
 
-    // Add the user to the database
+    // Add the user to the database with the hashed password
     const userDoc = await Companies.add({
       email,
       type,
       phoneNumber,
+      password: hashedPassword, // Store the hashed password in the database
       name,
       address,
       city,
       state,
       country,
       verified: false,
-      users:[]
+      users: []
     });
 
     const userId = userDoc.id;
@@ -54,41 +57,45 @@ export const signUp = async (req, res) => {
   }
 };
 
-
 // LoginAsChannelPartner ,LoginAsEmployer,LoginAsSupplier
 
 export const login = async (req, res) => {
-    const {email,password,type} = req.body;
-
-    if (!email || !password) {
-      return res.status(400).json({ error: "Email and password are required." });
-    }
-
-    try {
-      const userSnapshot = await Users.where("email", "==", email).get();
-      if (userSnapshot.empty) {
-        return res.status(404).json({ message: "User not found." });
+    const {email,password,role} = req.body;
+    console.log("role",role)
+    if (role === 'Company'){
+      
+      
+      if (!email || !password) {
+        return res.status(400).json({ error: "Email and password are required." });
       }
 
-      const userDoc = userSnapshot.docs[0];
-      if (userDoc.data().type !== type){
+      try {
+        const userSnapshot = await Companies.where("email", "==", email).get();
+        if (userSnapshot.empty) {
+          return res.status(404).json({ message: "User not found." });
+        }
+
+        const userDoc = userSnapshot.docs[0];
+        
+        const hashedPassword = userDoc.data().password;
+
+        const passwordMatch = await bcrypt.compare(password, hashedPassword);
+
+        if (passwordMatch) {
+          const userId = userDoc.id;
+          console.log(generateToken(userId))
+          return res.status(200).json({ message: "Logged in", token:`${generateToken(userId)}` });
+        } else {
+          return res.status(401).json({ message: "Authentication failed. Incorrect password." });
+        }
+      } catch (error) {
+        console.error("Error searching for user:", error);
+        return res.status(500).json({ error: "Internal Server Error" });
+      }
+
+    }else{
         return res.status(404).json({ message: "User not found2." });
 
-      }
-      const hashedPassword = userDoc.data().password;
-
-      const passwordMatch = await bcrypt.compare(password, hashedPassword);
-
-      if (passwordMatch) {
-        const userId = userDoc.id;
-        console.log(generateToken(userId))
-        return res.status(200).json({ message: "Logged in", token:`${generateToken(userId)}` });
-      } else {
-        return res.status(401).json({ message: "Authentication failed. Incorrect password." });
-      }
-    } catch (error) {
-      console.error("Error searching for user:", error);
-      return res.status(500).json({ error: "Internal Server Error" });
     }
   }
 
