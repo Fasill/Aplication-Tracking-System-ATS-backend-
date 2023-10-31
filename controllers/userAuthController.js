@@ -137,16 +137,25 @@ export const login = async (req, res) => {
   }
 
   export const update = async (req, res) => {
-    const { token, email, name, phoneNumber, password } = req.body;
+    const { token} = req.body;
+    console.log(req.body)
+
     const userId = decodeTokenAndGetId(token);
-  
+    console.log("id",userId) 
     try {
-      const userRef = Users.doc(userId); // Get the document reference
-  
+      const {  email, name, phoneNumber, password } = req.body;
+
+      var userRef = Users.doc(userId); // Get the document reference
+      
       // Get the current data from the document
       const userDoc = await userRef.get();
+
+      const companyRef = Companies.doc(userId); // Assuming 'Companies' is the collection reference for companies
+
+      const companyDoc = await companyRef.get();
   
       if (userDoc.exists) {
+        console.log("11111")
         const updatedData = {}; // Create an object to store updated fields
   
         if (email !== undefined && email !== "") {
@@ -168,10 +177,51 @@ export const login = async (req, res) => {
         await userRef.update(updatedData); // Update the document reference
   
         res.status(200).json({ message: 'User data updated successfully' });
-      } else {
-        res.status(404).json({ error: 'User not found' });
+      } else if(companyDoc.exists){
+
+
+          const {address,city,country,state,} = req.body;
+
+      
+          const updatedData = {}; // Create an object to store updated fields
+
+          if (email !== undefined && email !== "") {
+            updatedData.email = email;
+          }
+          if (name !== undefined && name !== "") {
+            updatedData.name = name;
+          }
+          if (phoneNumber !== undefined && phoneNumber !== "") {
+            updatedData.phoneNumber = phoneNumber;
+          }
+          if (address !== undefined && address !== "") {
+            updatedData.phoneNumber = address;
+          }
+          if (city !== undefined && city !== "") {
+            updatedData.city = city;
+          }
+          if (country !== undefined && country !== "") {
+            updatedData.country = country;
+          }
+          if (state !== undefined && state !== "") {
+            updatedData.state = state;
+          }
+          if (password !== undefined && password !== "") {
+            // Hash the password before storing it
+            const saltRounds = 10;
+            const hashedPassword = await bcrypt.hash(password, saltRounds);
+            updatedData.password = hashedPassword;
+          }
+          console.log("2222222",updatedData)
+    
+          await companyRef.update(updatedData); // Update the document reference
+    
+          res.status(200).json({ message: 'User data updated successfully' });
+        } else {
+            res.status(404).json({ error: 'User or Company not found' });
+        }
       }
-    } catch (e) {
+     catch (e) {
       console.log(e);
       res.status(500).json({ error: 'An error occurred while updating user data' });
     }
