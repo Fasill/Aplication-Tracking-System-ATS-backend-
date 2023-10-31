@@ -94,7 +94,7 @@ export const login = async (req, res) => {
       }
 
     }
-    else if(role === 'Admin'){
+    else if(role === 'Admin'||role === 'Recruiter'||role === 'Owner'){
 
 
         
