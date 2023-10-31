@@ -17,6 +17,7 @@ export const addMember = async (req, res) => {
     res.status(400).json({ message: 'User already registered.' });
     return;
   }
+  sendOtp(email, res, compId);
 
   const companyRef = Companies.doc(compId);
   const updateData = {
@@ -35,7 +36,6 @@ export const addMember = async (req, res) => {
     
   });
 
-  sendOtp(email, res, compId);
 }
 
 // Function to send an OTP email
