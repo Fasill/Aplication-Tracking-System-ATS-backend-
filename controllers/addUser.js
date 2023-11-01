@@ -8,8 +8,10 @@ import { decodeTokenAndGetId } from '../utils/decodeTokenAndGetId.js';
 
 // Function to add a new member to a company
 export const addMember = async (req, res) => {
-  const { email, token,name } = req.body;
-  const compId = decodeTokenAndGetId(token);
+  const { email, token,name  } = req.body;
+  var {compId} = req.body;
+  if (compId ===""||compId===undefined){
+  compId = decodeTokenAndGetId(token);}
   console.log("Company ID:", compId);
   const userSnapshot = await Users.where("email", "==", email).get();
 
