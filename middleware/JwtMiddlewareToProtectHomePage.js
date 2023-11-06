@@ -3,6 +3,7 @@ import jwt from 'jsonwebtoken';
 
 // Set the token expiration time
 const maxAge = 300;
+const secretKey = 'serivango312'; // Replace with your actual secret key
 
 // Middleware to verify tokens
 
@@ -25,6 +26,26 @@ export const requireAuth = (req, res, next) => {
     req.userId = decodedToken.id;
     next();
   });
+};
+
+// Middleware for token validation
+export const validateTokenMiddleware = (req, res, next) => {
+  const { token } = req.body;
+  console.log("token",token)
+  if (!token) {
+    return res.status(401).json({ error: 'Token is missing' });
+  }
+
+  try {
+    // Verify the token using the secret key
+    const decoded = jwt.verify(token, secretKey);
+    
+    // If the token is valid, you can access the decoded data in 'decoded'
+    req.userId = decoded.id; // You can store the user ID in the request object for future use
+    next();
+  } catch (error) {
+    return res.status(401).json({ error: 'Invalid token' });
+  }
 };
 
 // Middleware to verify the second type of token
