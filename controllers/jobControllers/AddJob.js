@@ -1,6 +1,9 @@
-import { Jobs } from '../../models/User.js'; // Import the Firestore Jobs collection reference
+
+import { Jobs,Users,Companies } from '../../models/User.js'; 
+import {decodeTokenAndGetId} from '../../utils/decodeTokenAndGetId.js';
 
 export const AddJob = (req, res) => {
+
   const {
     jobName,
     jobDescription,
@@ -13,8 +16,13 @@ export const AddJob = (req, res) => {
     openings,
     remarks,
     adminGroups,
+    token,
   } = req.body;
 
+  const id  =  decodeTokenAndGetId(token)
+
+
+  
   // Create a job object with the request data
   const job = {
     jobName,
@@ -28,6 +36,7 @@ export const AddJob = (req, res) => {
     openings,
     remarks,
     adminGroups,
+    addedBy:id
   };
 
   // Add the job to the Firestore Jobs collection

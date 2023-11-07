@@ -30,7 +30,11 @@ export const requireAuth = (req, res, next) => {
 
 // Middleware for token validation
 export const validateTokenMiddleware = (req, res, next) => {
-  const { token } = req.body;
+  var { token } = req.query;
+  if (token === ''||token === undefined){
+    var {token} = req.body  
+  }
+
   console.log("token",token)
   if (!token) {
     return res.status(401).json({ error: 'Token is missing' });
