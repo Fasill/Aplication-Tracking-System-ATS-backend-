@@ -35,7 +35,6 @@ export const validateTokenMiddleware = (req, res, next) => {
     var {token} = req.body  
   }
 
-  console.log("token",token)
   if (!token) {
     return res.status(401).json({ error: 'Token is missing' });
   }

@@ -21,3 +21,26 @@ export const myJobs = async (req, res) => {
         res.status(500).json({ error: "An error occurred while fetching snapshots" });
     }
 }
+
+
+export const detail = async (req, res) => {
+    try {
+        var { JobId } = req.query;
+        var JobId = parseInt(JobId,10)
+        const jobSnapshot = await Jobs.where('JobId', '==', JobId).get();
+
+        // Check if the job exists
+        if (jobSnapshot.empty) {
+            return res.status(404).json({ error: 'Job not found' });
+        }
+
+        // Assuming there's only one job with a specific JobId
+        const jobData = jobSnapshot.docs[0].data();
+
+        // You can now use jobData to send the job details in the response
+        return res.status(200).json({ job: jobData });
+    } catch (error) {
+        console.error('Error getting job details:', error);
+        return res.status(500).json({ error: 'Internal server error' });
+    }
+};
