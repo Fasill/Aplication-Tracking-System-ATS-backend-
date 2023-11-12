@@ -14,7 +14,6 @@ export const AddJob = (req, res) => {
     clientName,
     openings,
     remarks,
-    adminGroups,
     token,
   } = req.body;
 
@@ -49,7 +48,7 @@ export const AddJob = (req, res) => {
         clientName,
         openings,
         remarks,
-        adminGroups:{admin:id},
+        adminGroups:[{admin:id}],
         addedBy: id,
         JobId: generatedJobId,
       };

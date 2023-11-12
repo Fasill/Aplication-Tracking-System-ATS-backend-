@@ -25,25 +25,25 @@ export const AcceptJob = async (req, res) => {
             userData.AcceptedJobs = [];
         }
 
-        if (!userData.AcceptedJobs.some(job => job.JobId === JobId)) {
-            // Push an object with JobId and Role to the AcceptedJobs array
-            const role = "admin"; // You may need to define the role based on your application logic
-            userData.AcceptedJobs.push({ JobId, Role: role });
+        const index = userData.mappedJobs.findIndex(job => job.JobId === JobId);
 
+        if (index !== -1) {
+            const role = userData.mappedJobs[index].Role;
+
+            // Push an object with JobId and Role to the AcceptedJobs array
+            userData.AcceptedJobs.push({ JobId, Role: role });
             await Users.doc(userId).update({ AcceptedJobs: userData.AcceptedJobs });
 
             // Remove the job with the specified JobId from the mappedJobs array
-            userData.mappedJobs = userData.mappedJobs.filter(job => job.JobId !== JobId);
+            userData.mappedJobs.splice(index, 1);
             await Users.doc(userId).update({ mappedJobs: userData.mappedJobs });
 
             const jobData = jobSnapshot.docs[0].data();
 
-            // Check if adminGroups is an object
             if (typeof jobData.adminGroups === 'object') {
                 const existingAdminGroup = jobData.adminGroups[userId];
 
                 if (!existingAdminGroup) {
-                    // Add the user to the adminGroups object with the specified Role
                     jobData.adminGroups[userId] = { Role: role };
 
                     await Jobs.doc(jobSnapshot.docs[0].id).update({ adminGroups: jobData.adminGroups });
@@ -63,7 +63,7 @@ export const AcceptJob = async (req, res) => {
                 return res.status(500).json({ error: 'adminGroups is not an object' });
             }
         } else {
-            return res.status(400).json({ error: 'Job already accepted by the user' });
+            return res.status(404).json({ error: 'Job not found in mappedJobs' });
         }
     } catch (error) {
         console.error(error);
