@@ -34,7 +34,9 @@ export const addMember = async (req, res) => {
     email,
     role:"Recruiter",
     verified: false,
-    company :compId
+    company :compId,
+    mappedJobs:[],
+    AcceptedJobs:[]
     
   });
 
