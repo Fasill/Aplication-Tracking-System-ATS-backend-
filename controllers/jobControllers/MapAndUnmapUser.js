@@ -61,6 +61,7 @@ export const UnmapUser = async (req, res) => {
         const parsedJobId = parseInt(JobId);
 
         if (isNaN(parsedJobId)) {
+            
             return res.status(400).json({ message: 'Invalid JobId. Must be an integer.' });
         }
 
