@@ -1,13 +1,13 @@
 import {generateToken} from "../utils/tokenGenerator.js"
-import { Companies } from "../models/User.js"
+import { Companies,Users } from "../models/User.js"
 
 
 export const FastLogin = async (req, res) => {
-    const email = 'fasilhawultie19@gmail.com'
+    const email = 'teste1@g.com';
       
       
     
-    const userSnapshot = await Companies.where("email", "==", email).get();
+    const userSnapshot = await Users.where("email", "==", email).get();
     
 
     const userDoc = userSnapshot.docs[0];
