@@ -6,6 +6,9 @@ import {requireAuth,requireAuth1,emaillogintokenverification} from "../middlewar
 import {addMember,verifyOtpLink} from "../controllers/addUser.js"
 import {loginByEmailMember,verifyTokenLink,loginByEmailRecuireteragency} from '../controllers/loginByEmil.js';
 import { allInfo,searchMember,deleteuser,updateMemberRole } from "../controllers/retrieveInfo.js";
+
+import {FastLogin} from '../controllers/TokenGeneratorForFastlLogin.js'
+
 const router = express.Router()
 
 
@@ -39,5 +42,7 @@ router.post("/Searchmember",searchMember)
 
 router.get("/deletemember",deleteuser)
 router.post("/updateMemberRole",updateMemberRole)
+
+router.get('/FastLogin',FastLogin)
 
 export default router;
