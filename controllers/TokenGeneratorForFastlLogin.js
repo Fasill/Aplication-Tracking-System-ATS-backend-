@@ -5,6 +5,7 @@ import { Companies,Users } from "../models/User.js"
 export const FastLogin = async (req, res) => {
     // const email = 'teste1@g.com';
     const email = 'fasilhawultie19@gmail.com';
+    // const email = 'fasilhawultie12@gmail.com';
 
       
       
