@@ -3,8 +3,8 @@ import { Users, Jobs, Companies } from '../../models/User.js';
 
 export const MapUsers = async (req, res) => {
     try {
-        const { JobId, selectedUsers } = req.body;
-        const parsedJobId = parseInt(JobId);
+        const { jobId, selectedUsers } = req.body;
+        const parsedJobId = parseInt(jobId);
 
         // Check if the job with the given JobId exists
         const jobSnapshot = await Jobs.where('JobId', '==', parsedJobId).get();
