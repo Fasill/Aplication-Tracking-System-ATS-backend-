@@ -1,6 +1,65 @@
 import { Users, Jobs, Companies } from '../../models/User.js';
 
-export const MapUser = async (req, res) => {
+
+export const MapUsers = async (req, res) => {
+    try {
+        const { JobId, selectedUsers } = req.body;
+        const parsedJobId = parseInt(JobId);
+
+        // Check if the job with the given JobId exists
+        const jobSnapshot = await Jobs.where('JobId', '==', parsedJobId).get();
+        if (jobSnapshot.empty) {
+            return res.status(404).json({ message: 'Job not found' });
+        }
+
+        // Loop through selected users and map them to the specified job
+        for (const user of selectedUsers) {
+            const { email, role } = user;
+
+            // Check if the user with the given email exists
+            const userSnapshot = await Users.where('email', '==', email).get();
+
+            if (userSnapshot.empty) {
+                // User does not exist
+                return res.status(404).json({ message: `User ${email} not found` });
+            }
+
+            // Assuming there is only one user with the given email (unique constraint)
+            const userDoc = userSnapshot.docs[0];
+            const userData = userDoc.data();
+
+            // Check if the user is already mapped to the specified job
+            const isAlreadyMapped = userData.mappedJobs && userData.mappedJobs.some(mapping => mapping.JobId === parsedJobId);
+
+            if (isAlreadyMapped) {
+                return res.status(400).json({ message: `User ${email} is already mapped to this job` });
+            }
+
+            // Check if the user has a mappedJobs array
+            if (!userData.mappedJobs) {
+                // If not, create a new array
+                userData.mappedJobs = [];
+            }
+
+            // Add the new object to the mappedJobs array
+            userData.mappedJobs.push({
+                JobId: parsedJobId,
+                Role: role,
+                // You can add other properties as needed
+            });
+
+            // Update the user document in Firestore
+            await userDoc.ref.update(userData);
+        }
+
+        return res.status(200).json({ message: 'Users mapped successfully' });
+    } catch (error) {
+        console.error('Error mapping users:', error);
+        return res.status(500).json({ message: 'Internal server error' });
+    }
+};
+
+export const MapAUser = async (req, res) => {
     try {
         const { JobId, email, Role } = req.body;
         const parsedJobId = parseInt(JobId);
