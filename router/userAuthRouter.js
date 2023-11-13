@@ -2,10 +2,10 @@ import express from "express";
 
 import {signUp,update,login,searchUser,verify} from "../controllers/userAuthController.js";
 import {send_otp,verify_otp} from "../controllers/otpAndVerification.js";
-import {requireAuth,requireAuth1,emaillogintokenverification} from "../middleware/JwtMiddlewareToProtectHomePage.js";
+import {requireAuth,requireAuth1,emaillogintokenverification,validateTokenMiddleware} from "../middleware/JwtMiddlewareToProtectHomePage.js";
 import {addMember,verifyOtpLink} from "../controllers/addUser.js"
 import {loginByEmailMember,verifyTokenLink,loginByEmailRecuireteragency} from '../controllers/loginByEmil.js';
-import { allInfo,searchMember,deleteuser,updateMemberRole } from "../controllers/retrieveInfo.js";
+import { allInfo,searchMember,deleteuser,updateMemberRole,RetrieveAllUsers } from "../controllers/retrieveInfo.js";
 
 import {FastLogin} from '../controllers/TokenGeneratorForFastlLogin.js'
 
@@ -42,6 +42,7 @@ router.post("/Searchmember",searchMember)
 
 router.get("/deletemember",deleteuser)
 router.post("/updateMemberRole",updateMemberRole)
+router.get("/RetrieveAllUsers",validateTokenMiddleware,RetrieveAllUsers)
 
 router.get('/FastLogin',FastLogin)
 

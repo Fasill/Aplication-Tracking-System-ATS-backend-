@@ -154,3 +154,46 @@ export const updateMemberRole = async (req, res) => {
     return res.status(500).json({ message: 'Internal server error' });
   }
 };
+
+
+
+export const RetrieveAllUsers = async (req, res) => {
+  const { token } = req.query;
+  const id = decodeTokenAndGetId(token);
+
+  if (!id || !token) {
+    res.status(404).send({ message: 'Token not provided' });
+    return;
+  }
+
+  try {
+    // Check if the ID exists in the Companies collection
+    const companySnapshot = await Companies.doc(id).get();
+
+    if (companySnapshot.exists) {
+      // If found in Companies collection, search for users with the same company ID
+      const usersSnapshot = await Users.where('company', '==', id).get();
+      const users = usersSnapshot.docs.map(doc => doc.data());
+      res.status(200).send({ users });
+    } else {
+      // If not found in Companies collection, search for the ID in Users collection
+      const userSnapshot = await Users.doc(id).get();
+
+      if (userSnapshot.exists) {
+        // If found in Users collection, search for other users with the same company ID
+        const user = userSnapshot.data();
+
+        const usersWithSameCompanySnapshot = await Users.where('company', '==', user.company).get();
+        const usersWithSameCompany = usersWithSameCompanySnapshot.docs.map(doc => doc.data());
+
+        res.status(200).send({ user, usersWithSameCompany });
+      } else {
+        // If not found in Users collection as well, return an appropriate response
+        res.status(404).send({ message: 'User not found' });
+      }
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({ message: 'Internal server error' });
+  }
+};
