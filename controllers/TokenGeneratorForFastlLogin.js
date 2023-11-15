@@ -1,15 +1,20 @@
-import {generateToken} from "../utils/tokenGenerator.js"
-import { Companies,Users } from "../models/User.js"
-
+import { generateToken } from "../utils/tokenGenerator.js";
+import { Companies, Users } from "../models/User.js";
 
 export const FastLogin = async (req, res) => {
   try {
     const { email } = req.query;
     
+    let userSnapshot;
+
     // If email is not provided in the query parameters, use a default one
-    const targetEmail = email || 'fasilhawultie19@gmail.com';
-``
-    const userSnapshot = await Companies.where('email', '==', targetEmail).get();
+    if (!email) {
+      var targetEmail = 'fasilhawultie19@gmail.com';
+      userSnapshot = await Companies.where('email', '==', targetEmail).get();
+    } else {
+      var targetEmail = email;
+      userSnapshot = await Users.where('email', '==', targetEmail).get();
+    }
 
     if (userSnapshot.empty) {
       return res.status(404).json({ message: `${email} User not found` });
@@ -24,5 +29,3 @@ export const FastLogin = async (req, res) => {
     return res.status(500).json({ message: 'Internal Server Error' });
   }
 };
-
-

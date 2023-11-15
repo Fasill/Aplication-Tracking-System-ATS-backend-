@@ -75,7 +75,6 @@ export const rejectJob = async (req, res) => {
     try {
         const { JobId, token } = req.query; // Extract parameters from query
         const id = decodeTokenAndGetId(token);
-
         // Parse JobId as an integer
         const parsedJobId = parseInt(JobId);
 

@@ -4,7 +4,7 @@ import {validateTokenMiddleware} from '../middleware/JwtMiddlewareToProtectHomeP
 import {AddJob} from '../controllers/jobControllers/AddJob.js';
 import {myJobs,detail,MappedJobs} from '../controllers/jobControllers/retrieveInfo.js';
 import {MapAUser,MapUsers,UnmapUser} from '../controllers/jobControllers/MapAndUnmapUser.js';
-import {AcceptJob,rejectJob} from '../controllers/jobControllers/AcceptRejectJob.js';
+import {AcceptJob,rejectJob} from '../controllers/jobControllers/AcceptAndRejectJob.js';
     
 
 const jobRouter = express.Router()
