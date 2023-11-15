@@ -70,3 +70,49 @@ export const AcceptJob = async (req, res) => {
         return res.status(500).json({ error: 'Internal Server Error' });
     }
 };
+
+export const rejectJob = async (req, res) => {
+    try {
+        const { JobId, token } = req.query; // Extract parameters from query
+        const id = decodeTokenAndGetId(token);
+
+        // Parse JobId as an integer
+        const parsedJobId = parseInt(JobId);
+
+        if (isNaN(parsedJobId)) {
+            return res.status(400).json({ message: 'Invalid JobId. Must be an integer.' });
+        }
+
+        const userDoc = await Users.doc(id).get(); // Retrieve the user document
+
+        // Check if the user document exists
+        if (!userDoc.exists) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        const userData = userDoc.data();
+
+        // Check if the user has a mappedJobs array
+        if (!userData.mappedJobs) {
+            return res.status(404).json({ message: 'User is not mapped to any jobs' });
+        }
+
+        // Find the index of the mapping with the specified JobId
+        const mappingIndex = userData.mappedJobs.findIndex(mapping => mapping.JobId === parsedJobId);
+
+        if (mappingIndex === -1) {
+            return res.status(404).json({ message: 'User is not mapped to the specified job' });
+        }
+
+        // Remove the mapping from the mappedJobs array
+        userData.mappedJobs.splice(mappingIndex, 1);
+
+        // Update the user document in Firestore
+        await Users.doc(id).update({ mappedJobs: userData.mappedJobs });
+
+        return res.status(200).json({ message: 'User unmapped successfully' });
+    } catch (error) {
+        console.error('Error unmapping user:', error);
+        return res.status(500).json({ message: 'Internal server error' });
+    }
+};

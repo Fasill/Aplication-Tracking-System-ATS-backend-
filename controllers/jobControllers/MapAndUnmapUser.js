@@ -1,5 +1,5 @@
 import { Users, Jobs, Companies } from '../../models/User.js';
-
+import { decodeTokenAndGetId } from '../../utils/decodeTokenAndGetId.js';
 
 export const MapUsers = async (req, res) => {
     try {
@@ -160,3 +160,5 @@ export const UnmapUser = async (req, res) => {
         return res.status(500).json({ message: 'Internal server error' });
     }
 };
+
+

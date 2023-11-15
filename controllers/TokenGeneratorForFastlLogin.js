@@ -5,7 +5,7 @@ import { Companies,Users } from "../models/User.js"
 export const FastLogin = async (req, res) => {
   try {
     const { email } = req.query;
-
+    
     // If email is not provided in the query parameters, use a default one
     const targetEmail = email || 'fasilhawultie19@gmail.com';
 ``
