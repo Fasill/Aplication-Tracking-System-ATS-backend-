@@ -3,8 +3,6 @@ import { Users } from '../models/User.js';
 import { Companies } from "../models/User.js"
 
 
-
-
 export const searchMember = async(req,res)=>{
   const {token,name} = req.body;
   const id = decodeTokenAndGetId(token);
@@ -88,6 +86,7 @@ export const allInfo = async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 };
+
 export const deleteuser = async (req, res) => {
   const email = req.query.email;
 
@@ -129,6 +128,7 @@ export const deleteuser = async (req, res) => {
     return res.status(500).json({ message: 'Internal server error' });
   }
 };
+
 export const updateMemberRole = async (req, res) => {
   const { email, token, role } = req.body.data;
   console.log(req.body.data)
@@ -154,8 +154,6 @@ export const updateMemberRole = async (req, res) => {
     return res.status(500).json({ message: 'Internal server error' });
   }
 };
-
-
 
 export const RetrieveAllUsers = async (req, res) => {
   const { token } = req.query;
@@ -197,3 +195,5 @@ export const RetrieveAllUsers = async (req, res) => {
     res.status(500).send({ message: 'Internal server error' });
   }
 };
+
+
