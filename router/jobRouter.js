@@ -2,10 +2,10 @@ import express from "express";
 
 import {validateTokenMiddleware} from '../middleware/JwtMiddlewareToProtectHomePage.js';
 import {AddJob} from '../controllers/jobControllers/AddJob.js';
-import {myJobs,detail,MappedJobs} from '../controllers/jobControllers/retrieveInfo.js';
+import {myJobs,detail,MappedJobs,AcceptedJobs} from '../controllers/jobControllers/retrieveInfo.js';
 import {MapAUser,MapUsers,UnmapUser} from '../controllers/jobControllers/MapAndUnmapUser.js';
 import {AcceptJob,rejectJob} from '../controllers/jobControllers/AcceptAndRejectJob.js';
-    
+
 
 const jobRouter = express.Router()
 
@@ -19,6 +19,7 @@ jobRouter.get('/MappedJobs',validateTokenMiddleware,MappedJobs);
 jobRouter.delete('/UnmapUser',validateTokenMiddleware,UnmapUser);
 
 jobRouter.post('/acceptJob',validateTokenMiddleware,AcceptJob);
+jobRouter.get('/AcceptedJobs',validateTokenMiddleware,AcceptedJobs);
 jobRouter.delete('/rejectJob',validateTokenMiddleware,rejectJob);
 
 

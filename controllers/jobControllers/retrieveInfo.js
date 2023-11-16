@@ -77,3 +77,35 @@ export const MappedJobs = async (req, res) => {
       return res.status(500).json({ message: 'Internal Server Error' });
     }
   };
+
+export const AcceptedJobs = async(req,res)=>{
+  try {
+    const { token } = req.query;
+    const id = decodeTokenAndGetId(token);
+
+    // Assuming 'Users' is the Firestore collection for users
+    const userDoc = await Users.doc(id).get();
+
+    if (!userDoc.exists) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    const userData = userDoc.data();
+
+    // Extract JobIds from the AcceptedJobs array
+    const jobIds = userData.AcceptedJobs.map((AcceptedJobs) => AcceptedJobs.JobId);
+
+    // Assuming 'Jobs' is the Firestore collection for jobs
+    const jobsQuerySnapshot = await Jobs.where('JobId', 'in', jobIds).get();
+
+    const jobs = [];
+    jobsQuerySnapshot.forEach((jobDoc) => {
+      jobs.push(jobDoc.data());
+    });
+
+    return res.status(200).json(jobs);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: 'Internal Server Error' });
+  }
+}
