@@ -1,10 +1,10 @@
 import admin from "firebase-admin"
-import { Users } from '../models/User.js';
-import { Companies } from "../models/User.js"
-import { generateToken, generateTokenforOtpVerificationpage } from '../utils/tokenGenerator.js';
-import { otpRef } from '../models/User.js';
+import { Users } from '../../models/User.js';
+import { Companies } from "../../models/User.js"
+import { generateToken, generateTokenforOtpVerificationpage } from '../../utils/tokenGenerator.js';
+import { otpRef } from '../../models/User.js';
 import nodemailer from 'nodemailer';
-import { decodeTokenAndGetId } from '../utils/decodeTokenAndGetId.js';
+import { decodeTokenAndGetId } from '../../utils/decodeTokenAndGetId.js';
 
 // Function to add a new member to a company
 export const addMember = async (req, res) => {

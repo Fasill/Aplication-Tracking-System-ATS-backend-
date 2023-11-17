@@ -1,13 +1,13 @@
 import express from "express";
 
-import {signUp,update,login,searchUser,verify} from "../controllers/userAuthController.js";
-import {send_otp,verify_otp} from "../controllers/otpAndVerification.js";
+import {signUp,update,login,searchUser,verify} from "../controllers/userControllers/userAuthController.js";
+import {send_otp,verify_otp} from "../controllers/userControllers/otpAndVerification.js";
 import {requireAuth,requireAuth1,emaillogintokenverification,validateTokenMiddleware} from "../middleware/JwtMiddlewareToProtectHomePage.js";
-import {addMember,verifyOtpLink} from "../controllers/addUser.js"
-import {loginByEmailMember,verifyTokenLink,loginByEmailRecuireteragency} from '../controllers/loginByEmil.js';
-import { allInfo,searchMember,deleteuser,updateMemberRole,RetrieveAllUsers } from "../controllers/retrieveInfo.js";
+import {addMember,verifyOtpLink} from "../controllers/userControllers/addUser.js"
+import {loginByEmailMember,verifyTokenLink,loginByEmailRecuireteragency} from '../controllers/userControllers/loginByEmil.js';
+import { allInfo,searchMember,deleteuser,updateMemberRole,RetrieveAllUsers } from "../controllers/userControllers/retrieveInfo.js";
 
-import {FastLogin} from '../controllers/TokenGeneratorForFastlLogin.js'
+import {FastLogin} from '../controllers/userControllers/TokenGeneratorForFastlLogin.js'
 
 const router = express.Router()
 

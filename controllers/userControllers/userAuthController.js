@@ -1,9 +1,9 @@
 import bcrypt, { hash } from "bcrypt"
-import {Users} from "../models/User.js"
-import {Companies} from "../models/User.js"
+import {Users} from "../../models/User.js"
+import {Companies} from "../../models/User.js"
 
-import {generateToken} from "../utils/tokenGenerator.js"
-import { decodeTokenAndGetId } from '../utils/decodeTokenAndGetId.js';
+import {generateToken} from "../../utils/tokenGenerator.js"
+import { decodeTokenAndGetId } from '../../utils/decodeTokenAndGetId.js';
 
 
 export const signUp = async (req, res) => {

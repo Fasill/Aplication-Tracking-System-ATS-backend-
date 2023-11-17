@@ -1,6 +1,6 @@
-import { decodeTokenAndGetId } from '../utils/decodeTokenAndGetId.js';
-import { Users } from '../models/User.js';
-import { Companies } from "../models/User.js"
+import { decodeTokenAndGetId } from '../../utils/decodeTokenAndGetId.js';
+import { Users } from '../../models/User.js';
+import { Companies } from "../../models/User.js"
 
 
 export const searchMember = async(req,res)=>{

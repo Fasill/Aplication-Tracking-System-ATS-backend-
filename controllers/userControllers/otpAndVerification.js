@@ -1,11 +1,11 @@
 import bcrypt from 'bcrypt';
-import { Users } from '../models/User.js';
-import {Companies} from "../models/User.js"
+import { Users } from '../../models/User.js';
+import {Companies} from "../../models/User.js"
 
-import { generateToken,generateTokenforOtpVerificationpage } from '../utils/tokenGenerator.js';
-import { otpRef } from '../models/User.js';
+import { generateToken,generateTokenforOtpVerificationpage } from '../../utils/tokenGenerator.js';
+import { otpRef } from '../../models/User.js';
 import nodemailer from 'nodemailer';
-import { decodeTokenAndGetId } from '../utils/decodeTokenAndGetId.js';
+import { decodeTokenAndGetId } from '../../utils/decodeTokenAndGetId.js';
 
 // Function to send an OTP email
 const sendOtpEmail = async (email, otp) => {

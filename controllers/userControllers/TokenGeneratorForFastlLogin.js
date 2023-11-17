@@ -1,5 +1,5 @@
-import { generateToken } from "../utils/tokenGenerator.js";
-import { Companies, Users } from "../models/User.js";
+import { generateToken } from "../../utils/tokenGenerator.js";
+import { Companies, Users } from "../../models/User.js";
 
 export const FastLogin = async (req, res) => {
   try {

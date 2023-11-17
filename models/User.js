@@ -24,4 +24,5 @@ export const otpRef  = db.collection("otp");
 export const Users = db.collection('User');
 export const Companies = db.collection('Companies');
 export const Jobs = db.collection('Jobs');
+export const Comments = db.collection('Comments');
 

@@ -1,6 +1,6 @@
-import { Users, Companies} from '../models/User.js';
-import { generateToken, generateTokenforOtpVerificationpage } from '../utils/tokenGenerator.js';
-import { otpRef } from '../models/User.js';
+import { Users, Companies} from '../../models/User.js';
+import { generateToken, generateTokenforOtpVerificationpage } from '../../utils/tokenGenerator.js';
+import { otpRef } from '../../models/User.js';
 import nodemailer from 'nodemailer';
 
 // Function to add a new member to a company (This function is currently missing)
