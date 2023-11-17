@@ -47,8 +47,10 @@ export const AddJob = (req, res) => {
         optionalSkills,
         clientName,
         openings,
-        remarks,
-        adminGroups:[{admin:id}],
+        remarks, 
+        // adminGroups: { `${id}`:{ Role: "Admin" } },
+        adminGroups: { [id]: { Role: "Admin" } }, 
+        // adminGroups:{id:{Role:"Admin"}},
         addedBy: id,
         JobId: generatedJobId,
       };
