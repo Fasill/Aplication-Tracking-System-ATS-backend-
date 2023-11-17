@@ -4,6 +4,8 @@ import { decodeTokenAndGetId } from "../../utils/decodeTokenAndGetId.js";
 const addComment = (req, res) => {
     try {
         const { JobId, text, token } = req.body;
+        const parsedJobId = parseInt(JobId);
+
         const userId = decodeTokenAndGetId(token);
         const currentTime = new Date();
 
@@ -11,7 +13,7 @@ const addComment = (req, res) => {
         const formattedTimestamp = currentTime.toISOString().slice(0, 19).replace("T", " ");
 
         const allInfo = {
-            JobId,
+            JobId:parsedJobId,
             text,
             userId,
             timeStamp: formattedTimestamp,

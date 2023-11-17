@@ -17,21 +17,38 @@ const getJobComments = async (req, res) => {
             return res.status(200).json({ message: 'No comments found for the job' });
         }
 
-        // Map comment data from snapshot
-        const comments = commentSnapshot.docs.map(doc => {
+        // Map comment data from snapshot with user data
+        const comments = await Promise.all(commentSnapshot.docs.map(async doc => {
             const commentData = doc.data();
-            const userData = {}; // You can modify this part based on your user data retrieval logic
 
-            return {
-                commentId: doc.id,
-                ...commentData,
-                userName: userData.name || null,
-                // Add other user information as needed
-            };
-        });
+            try {
+                const userSnapshot = await Users.doc(commentData.userId).get();
+                const userData = userSnapshot.data();
+
+
+                // Modify this part based on your companies data retrieval logic
+                const compSnapshot = await Companies.doc(commentData.userId).get();
+                const companiesData = compSnapshot.data();
+
+                return {
+                    commentId: doc.id,
+                    ...commentData,
+                    userName: userData && userData.name || (companiesData && companiesData.name) || null,
+                    // Add other user information as needed
+                };
+            } catch (error) {
+                console.error("Error fetching user data:", error);
+                return {
+                    commentId: doc.id,
+                    ...commentData,
+                    userName: null,
+                    // Add other default user information as needed
+                };
+            }
+        }));
 
         // Order comments by timeStamp in descending order
-        const sortedComments = comments.sort((a, b) => {
+        const sortedComments = comments.sort((b,a) => {
             return new Date(b.timeStamp) - new Date(a.timeStamp);
         });
 
