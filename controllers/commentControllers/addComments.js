@@ -7,14 +7,14 @@ const addComment = (req, res) => {
         const userId = decodeTokenAndGetId(token);
         const currentTime = new Date();
 
-        // Format timestamp to only include year, month, and time
-        const formattedTimestamp = currentTime.toISOString().slice(0, 16).replace("T", " ");
+        // Format timestamp to include seconds
+        const formattedTimestamp = currentTime.toISOString().slice(0, 19).replace("T", " ");
 
         const allInfo = {
             JobId,
             text,
             userId,
-            timeStamp: formattedTimestamp
+            timeStamp: formattedTimestamp,
         };
 
         Comments.add(allInfo);
@@ -22,14 +22,14 @@ const addComment = (req, res) => {
         res.status(200).json({
             success: true,
             message: "Comment added successfully",
-            data: allInfo
+            data: allInfo,
         });
     } catch (error) {
         console.error("Error adding comment:", error);
         res.status(500).json({
             success: false,
             message: "Internal server error",
-            error: error.message
+            error: error.message,
         });
     }
 };

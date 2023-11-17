@@ -1,4 +1,4 @@
-import { Comments, Jobs, Users, Companies} from '../../models/User.js';
+import { Comments, Jobs, Users, Companies } from '../../models/User.js';
 
 const getJobComments = async (req, res) => {
     const { JobId } = req.query;
@@ -18,37 +18,27 @@ const getJobComments = async (req, res) => {
         }
 
         // Map comment data from snapshot
-        const comments = await Promise.all(commentSnapshot.docs.map(async (doc) => {
+        const comments = commentSnapshot.docs.map(doc => {
             const commentData = doc.data();
+            const userData = {}; // You can modify this part based on your user data retrieval logic
 
-            // Retrieve user information for the current comment
-            const userSnapshot = await Users.doc(commentData.userId).get();
-            const companySnapshot = await Companies.doc(commentData.userId).get();
-            
-            
-            
-            if(userSnapshot.exists){
-                var userData = userSnapshot.data();
-            }
-            else if (companySnapshot.exists){
-                var userData = companySnapshot.data(); 
-            }
-            else{
-            return res.status(404).json({ message: 'user not found' });
-
-            }
             return {
                 commentId: doc.id,
                 ...commentData,
-                userName: userData ? userData.name : null,
+                userName: userData.name || null,
                 // Add other user information as needed
             };
-        }));
+        });
+
+        // Order comments by timeStamp in descending order
+        const sortedComments = comments.sort((a, b) => {
+            return new Date(b.timeStamp) - new Date(a.timeStamp);
+        });
 
         res.status(200).json({
             success: true,
             message: 'Comments retrieved successfully',
-            data: comments,
+            data: sortedComments,
         });
     } catch (error) {
         console.error("Error getting job comments:", error);
