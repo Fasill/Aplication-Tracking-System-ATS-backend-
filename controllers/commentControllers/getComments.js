@@ -26,6 +26,7 @@ const getJobComments = async (req, res) => {
             const companySnapshot = await Companies.doc(commentData.userId).get();
             
             
+            
             if(userSnapshot.exists){
                 var userData = userSnapshot.data();
             }
