@@ -48,11 +48,10 @@ export const AddJob = (req, res) => {
         clientName,
         openings,
         remarks, 
-        // adminGroups: { `${id}`:{ Role: "Admin" } },
         adminGroups: { [id]: { Role: "Admin" } }, 
-        // adminGroups:{id:{Role:"Admin"}},
         addedBy: id,
         JobId: generatedJobId,
+        status:"Active"
       };
 
       // Add the job to the Firestore Jobs collection
