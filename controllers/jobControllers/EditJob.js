@@ -11,7 +11,6 @@ export const EditJob = async (req, res) => {
     const parsedJobId = parseInt(JobId);
     console.log(req.body)
 
-
     try {
         // Get the job document from Firestore
         const jobSnapshot = await Jobs.where('JobId', '==', parsedJobId).get();
@@ -25,7 +24,7 @@ export const EditJob = async (req, res) => {
         const jobDoc = jobSnapshot.docs[0];
 
         // Update the document with non-null values from the request body
-        if (inputs.JobName !== null) jobDoc.ref.update({ JobName: inputs.JobName });
+        if (inputs.jobName !== null) jobDoc.ref.update({ jobName: inputs.jobName });
         if (inputs.openings !== null) jobDoc.ref.update({ openings: inputs.openings });
         if (inputs.clientName !== null) jobDoc.ref.update({ clientName: inputs.clientName });
         if (inputs.status !== null) jobDoc.ref.update({ status: inputs.status });
