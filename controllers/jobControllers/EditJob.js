@@ -1,6 +1,38 @@
-import {Jobs} from '../../models/User.js'
+import { Jobs, Users } from '../../models/User.js';
+import { decodeTokenAndGetId } from '../../utils/decodeTokenAndGetId.js';
 
-const EditJob = async (req, res) => {
+export const deleteAJob = async (req, res) => {
+    const { token, JobId } = req.query;
+    const parsedJobId = parseInt(JobId);
+
+    const userId = decodeTokenAndGetId(token);
+    const jobSnapshot = await Jobs.where('JobId', '==', parsedJobId).get();
+
+    // Check if the job exists
+    if (!jobSnapshot.empty) {
+        const jobData = jobSnapshot.docs[0].data();
+
+        // Check if the user is an admin
+        if (
+            jobData.adminGroups &&
+            jobData.adminGroups[userId] &&
+            jobData.adminGroups[userId].Role === 'Admin'
+        ) {
+            // User is admin, delete the document
+            await Jobs.doc(jobSnapshot.docs[0].id).delete();
+            return res.status(200).json({ message: 'Job deleted successfully' });
+        } else {
+            // User doesn't have the required role
+            return res.status(403).json({ message: 'Permission denied' });
+        }
+    } else {
+        // Job not found
+        return res.status(404).json({ message: 'Job not found' });
+    }
+};
+
+
+export const EditJob = async (req, res) => {
     const {
         JobId,
         JobName,
@@ -48,4 +80,3 @@ const EditJob = async (req, res) => {
         return res.status(500).json({ message: 'Internal server error' });
     }
 };
-export default EditJob;
