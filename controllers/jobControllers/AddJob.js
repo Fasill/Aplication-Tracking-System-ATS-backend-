@@ -49,6 +49,7 @@ export const AddJob = (req, res) => {
         openings,
         remarks, 
         adminGroups: { [id]: { Role: "Admin" } }, 
+        candidates:[],
         addedBy: id,
         JobId: generatedJobId,
         status:"Active"
