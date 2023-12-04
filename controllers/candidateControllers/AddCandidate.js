@@ -14,6 +14,7 @@ const storage = getStorage();
 
 const addClient = async (req, res) => {
   const {
+    
     Name,
     PhoneNumber,
     EmailID,
