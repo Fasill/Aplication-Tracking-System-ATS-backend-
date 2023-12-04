@@ -25,14 +25,16 @@ const addClient = async (req, res) => {
     CurrentCTC,
     ExpectedCTC,
     Remarks,
-    JobId,
-    token,
+    jobId,
+    
   } = req.body;
+  const token  = req.query.token
+
   try {
+
     const userId = decodeTokenAndGetId(token);
     const userSnapshot = await Users.doc(userId).get();
-    const parsedJobId = parseInt(JobId);
-
+    const parsedJobId = parseInt(jobId);
     const jobSnapshot = await Jobs.where("JobId","==",parsedJobId).get()
     if (!jobSnapshot){
       res.status(405).send({message:'Job not Found'})
@@ -59,7 +61,7 @@ const addClient = async (req, res) => {
         CurrentCTC,
         ExpectedCTC,
         Remarks,
-        JobId,
+        JobId:parsedJobId,
         resumeUrl: resumeUrl,
         addedBy: userId,
       };
@@ -90,7 +92,7 @@ const addClient = async (req, res) => {
         ExpectedCTC,
         Remarks,
         resumeUrl: resumeUrl,
-        JobId,
+        JobId:parsedJobId,
         addedBy: userId,
       };
 
@@ -114,7 +116,7 @@ export default addClient;
 const uploadresume = async (req) => {
   try {
     const dateTime = giveCurrentDateTime();
-    const storageRef = ref(storage, `Resume/${req.file.originalname}_${dateTime}`);
+    const storageRef = ref(storage, `Resume/${dateTime}`);
     const metadata = {
       contentType: req.file.mimetype,
     };
