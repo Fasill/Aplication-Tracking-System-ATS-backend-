@@ -12,7 +12,7 @@ initializeApp(firebaseConfig);
 // Create a storage instance
 const storage = getStorage();
 
-const addClient = async (req, res) => {
+export const addClient = async (req, res) => {
   const {
     
     Name,
@@ -112,7 +112,7 @@ const addClient = async (req, res) => {
   }
 };
 
-export default addClient;
+
 
 const uploadresume = async (req) => {
   try {
@@ -130,4 +130,34 @@ const uploadresume = async (req) => {
     console.error(e);
     throw new Error('Internal server error');
   }
+};
+
+
+export const DeleteCandidate = async (req, res) => {
+  const {EmailId,token} = req.query;
+  console.log(EmailId,token)
+  const userId = decodeTokenAndGetId(token);
+
+  const userSnapshot = await Users.doc(userId).get();
+  const userData = userSnapshot.exists ? userSnapshot.data() : null;
+
+  if (!userData) {
+    return res.status(404).json({ error: 'User not found' });
+  }
+
+  const candidateSnapshot = await Candidates.where('EmailID', '==',EmailId ).get();
+  const candidateData = candidateSnapshot.size > 0 ? candidateSnapshot.docs[0].data() : null;
+
+  if (!candidateData) {
+    return res.status(404).json({ error: 'Candidate not found' });
+  }
+
+  if (candidateData.addedBy !== userId) {
+    return res.status(403).json({ error: 'You are not eligible for this action' });
+  }
+
+  // Delete the candidate
+  await Candidates.doc(candidateSnapshot.docs[0].id).delete();
+
+  res.status(200).json({ success: 'Candidate deleted successfully' });
 };

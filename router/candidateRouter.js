@@ -1,6 +1,7 @@
 import express from 'express';
 import multer from 'multer';
-import addClient from '../controllers/candidateControllers/AddCandidate.js';
+import {DeleteCandidate,addClient } from '../controllers/candidateControllers/CRUDCandidate.js'
+
 import { validateTokenMiddleware } from '../middleware/JwtMiddlewareToProtectHomePage.js';
 import {RetrieveCandidate} from '../controllers/candidateControllers/RetrieveCandidate.js';
 
@@ -12,5 +13,5 @@ const upload = multer({ storage: multer.memoryStorage() });
 
 candidateRouter.post('/upload-resume', validateTokenMiddleware, upload.single('filename'), addClient);
 candidateRouter.get('/get-candidates',validateTokenMiddleware,RetrieveCandidate);
-
+candidateRouter.delete('/delete-candidates',validateTokenMiddleware,DeleteCandidate)
 export default candidateRouter;
