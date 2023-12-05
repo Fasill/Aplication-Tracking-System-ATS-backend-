@@ -4,7 +4,6 @@ import { firebaseConfig } from '../../models/User.js';
 import { initializeApp } from 'firebase/app';
 import { Users, Candidates, Companies,Jobs } from '../../models/User.js';
 import { decodeTokenAndGetId } from '../../utils/decodeTokenAndGetId.js';
-import { generateToken } from '../../utils/tokenGenerator.js';
 import { deleteObject } from 'firebase/storage';
 
 // Initialize Firebase app with the provided config
@@ -162,7 +161,7 @@ export const DeleteCandidate = async (req, res) => {
 
     // Delete the resume from Firestore Storage
     await deleteObject(storageRef);
-    
+
     // Delete the candidate from Firestore
     await Candidates.doc(candidateSnapshot.docs[0].id).delete();
 
