@@ -1,10 +1,9 @@
+import { ref, uploadBytesResumable, getDownloadURL ,deleteObject} from 'firebase/storage';
+import { giveCurrentDateTime } from '../../utils/DateAndTime.js';
 
 import { decodeTokenAndGetId } from '../../utils/decodeTokenAndGetId.js';
-import { Users, Candidates, Companies, Jobs, uploadresume, deleteResume } from '../../models/User.js';
+import { Users, Candidates, Companies, Jobs,storage } from '../../models/User.js';
 
-import { Users, Candidates, Companies,Jobs } from '../../models/User.js';
-import { decodeTokenAndGetId } from '../../utils/decodeTokenAndGetId.js';
-import {uploadresume} from '../../models/User.js'
 
 
 
@@ -24,11 +23,12 @@ export const addClient = async (req, res) => {
     jobId,
   } = req.body;
   const token = req.query.token;
-
+  console.log(req.body)
   try {
     const userId = decodeTokenAndGetId(token);
     const userSnapshot = await Users.doc(userId).get();
     const parsedJobId = parseInt(jobId);
+    console.log(parsedJobId)
     const jobSnapshot = await Jobs.where('JobId', '==', parsedJobId).get();
 
     if (!jobSnapshot.docs.length) {
@@ -105,5 +105,65 @@ export const addClient = async (req, res) => {
   } catch (e) {
     console.error(e);
     res.status(500).send({ message: 'Internal server error' });
+  }
+};
+
+
+
+// Add the uploadresume function
+export const uploadresume = async (req) => {
+  try {
+    const dateTime = giveCurrentDateTime();
+    const storageRef = ref(storage, `Resume/${dateTime}`);
+    const metadata = {
+      contentType: req.file.mimetype,
+    };
+    const snapshot = await uploadBytesResumable(storageRef, req.file.buffer, metadata);
+    const downloadURL = await getDownloadURL(snapshot.ref);
+
+    return downloadURL;
+  } catch (e) {
+    console.error(e);
+    throw new Error('Internal server error');
+  }
+};
+
+
+export const DeleteCandidate = async (req, res) => {
+  const { EmailId, token } = req.query;
+  const userId = decodeTokenAndGetId(token);
+
+  try {
+    const userSnapshot = await Users.doc(userId).get();
+    const userData = userSnapshot.exists ? userSnapshot.data() : null;
+
+    if (!userData) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    const candidateSnapshot = await Candidates.where('EmailID', '==', EmailId).get();
+    const candidateData = candidateSnapshot.size > 0 ? candidateSnapshot.docs[0].data() : null;
+
+    if (!candidateData) {
+      return res.status(404).json({ error: 'Candidate not found' });
+    }
+
+    if (candidateData.addedBy !== userId) {
+      return res.status(403).json({ error: 'You are not eligible for this action' });
+    }
+
+    // Delete the resume from Firestore Storage
+    const storageRef = ref(storage, candidateData.resumeUrl);
+
+    // Delete the resume from Firestore Storage
+    await deleteObject(storageRef);
+    
+    // Delete the candidate from Firestore
+    await Candidates.doc(candidateSnapshot.docs[0].id).delete();
+
+    res.status(200).json({ success: 'Candidate and associated resume deleted successfully' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 };

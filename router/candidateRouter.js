@@ -1,9 +1,9 @@
 import express from 'express';
 import multer from 'multer';
-import {addClient } from '../controllers/candidateControllers/CRUDCandidate.js'
+import {addClient,DeleteCandidate } from '../controllers/candidateControllers/CRUDCandidate.js'
 
 import { validateTokenMiddleware } from '../middleware/JwtMiddlewareToProtectHomePage.js';
-// import {RetrieveCandidate} from '../controllers/candidateControllers/RetrieveCandidate.js';
+import {RetrieveCandidate} from '../controllers/candidateControllers/RetrieveCandidate.js';
 
 // Create an instance of Express Router
 const candidateRouter = express.Router();
@@ -12,6 +12,6 @@ const candidateRouter = express.Router();
 const upload = multer({ storage: multer.memoryStorage() });
 
 candidateRouter.post('/upload-resume', validateTokenMiddleware, upload.single('filename'), addClient);
-// candidateRouter.get('/get-candidates',validateTokenMiddleware,RetrieveCandidate);
-// candidateRouter.delete('/delete-candidates',validateTokenMiddleware,DeleteCandidate)
+candidateRouter.get('/get-candidates',validateTokenMiddleware,RetrieveCandidate);
+candidateRouter.delete('/delete-candidates',validateTokenMiddleware,DeleteCandidate)
 export default candidateRouter;
