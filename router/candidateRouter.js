@@ -1,7 +1,7 @@
 import express from 'express';
 import multer from 'multer';
-import {addClient,DeleteCandidate } from '../controllers/candidateControllers/CRUDCandidate.js'
-
+import {addClient } from '../controllers/candidateControllers/CRUDCandidate.js'
+import {DeleteCandidate} from '../models/User.js'
 import { validateTokenMiddleware } from '../middleware/JwtMiddlewareToProtectHomePage.js';
 import {RetrieveCandidate} from '../controllers/candidateControllers/RetrieveCandidate.js';
 
