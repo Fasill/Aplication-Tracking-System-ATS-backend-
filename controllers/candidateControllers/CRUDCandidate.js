@@ -5,6 +5,7 @@ import { initializeApp } from 'firebase/app';
 import { Users, Candidates, Companies,Jobs } from '../../models/User.js';
 import { decodeTokenAndGetId } from '../../utils/decodeTokenAndGetId.js';
 import { generateToken } from '../../utils/tokenGenerator.js';
+import { deleteObject } from 'firebase/storage';
 
 // Initialize Firebase app with the provided config
 initializeApp(firebaseConfig);
@@ -134,30 +135,40 @@ const uploadresume = async (req) => {
 
 
 export const DeleteCandidate = async (req, res) => {
-  const {EmailId,token} = req.query;
-  console.log(EmailId,token)
+  const { EmailId, token } = req.query;
   const userId = decodeTokenAndGetId(token);
 
-  const userSnapshot = await Users.doc(userId).get();
-  const userData = userSnapshot.exists ? userSnapshot.data() : null;
+  try {
+    const userSnapshot = await Users.doc(userId).get();
+    const userData = userSnapshot.exists ? userSnapshot.data() : null;
 
-  if (!userData) {
-    return res.status(404).json({ error: 'User not found' });
+    if (!userData) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    const candidateSnapshot = await Candidates.where('EmailID', '==', EmailId).get();
+    const candidateData = candidateSnapshot.size > 0 ? candidateSnapshot.docs[0].data() : null;
+
+    if (!candidateData) {
+      return res.status(404).json({ error: 'Candidate not found' });
+    }
+
+    if (candidateData.addedBy !== userId) {
+      return res.status(403).json({ error: 'You are not eligible for this action' });
+    }
+
+    // Delete the resume from Firestore Storage
+    const storageRef = ref(storage, candidateData.resumeUrl);
+
+    // Delete the resume from Firestore Storage
+    await deleteObject(storageRef);
+    
+    // Delete the candidate from Firestore
+    await Candidates.doc(candidateSnapshot.docs[0].id).delete();
+
+    res.status(200).json({ success: 'Candidate and associated resume deleted successfully' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
   }
-
-  const candidateSnapshot = await Candidates.where('EmailID', '==',EmailId ).get();
-  const candidateData = candidateSnapshot.size > 0 ? candidateSnapshot.docs[0].data() : null;
-
-  if (!candidateData) {
-    return res.status(404).json({ error: 'Candidate not found' });
-  }
-
-  if (candidateData.addedBy !== userId) {
-    return res.status(403).json({ error: 'You are not eligible for this action' });
-  }
-
-  // Delete the candidate
-  await Candidates.doc(candidateSnapshot.docs[0].id).delete();
-
-  res.status(200).json({ success: 'Candidate deleted successfully' });
 };
