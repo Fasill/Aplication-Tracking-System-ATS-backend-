@@ -27,4 +27,3 @@ export const Candidates = db.collection('Candidates');
 export const Companies = db.collection('Companies');
 export const Jobs = db.collection('Jobs');
 export const Comments = db.collection('Comments');
-
