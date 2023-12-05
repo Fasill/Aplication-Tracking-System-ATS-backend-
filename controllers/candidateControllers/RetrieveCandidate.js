@@ -5,6 +5,7 @@ export const RetrieveCandidate = async (req, res) => {
     try {
         // Destructuring the values from req.query
         const { token, jobId } = req.query;
+        const { Name } = req.query;
 
         // Parsing jobId to ensure it's an integer
         const parsedJobId = parseInt(jobId);
@@ -56,10 +57,22 @@ export const RetrieveCandidate = async (req, res) => {
         // Extracting candidate data from the snapshot
         const candidatesData = CandidatesSnapshot.docs.map(doc => doc.data());
 
-        // Continue with the rest of your code...
+        // Check if req.query.Name is empty
+        if (Name === '') {
+            // If empty, no filtering is required, return all candidates
+            res.status(200).send({ message: "Candidates retrieved successfully", candidates: candidatesData });
+            return;
+        }
 
-        // Sending a successful response with the retrieved candidates
-        res.status(200).send({ message: "Candidates retrieved successfully", candidates: candidatesData });
+        // Filtering candidates based on the provided 'Name'
+        const filteredCandidates = candidatesData.filter(candidate => {
+            const candidateName = candidate.Name.toLowerCase(); // Convert to lowercase for case-insensitive comparison
+            const providedName = Name.toLowerCase(); // Convert to lowercase for case-insensitive comparison
+            return candidateName.startsWith(providedName) || candidateName === providedName;
+        });
+
+        // Sending a successful response with the filtered candidates
+        res.status(200).send({ message: "Candidates retrieved successfully", candidates: filteredCandidates });
 
     } catch (error) {
         // Handling any errors that occurred during the process
