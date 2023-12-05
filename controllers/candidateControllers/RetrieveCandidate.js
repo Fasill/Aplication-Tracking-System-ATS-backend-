@@ -1,5 +1,5 @@
 import { Users, Jobs, Candidates } from '../../models/User.js';
-import { decodeTokenAndGetId } from '../../utils/decodeTokenAndGetId';
+import { decodeTokenAndGetId } from '../../utils/decodeTokenAndGetId.js';
 
 export const RetrieveCandidate = async (req, res) => {
     try {
