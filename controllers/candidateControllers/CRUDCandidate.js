@@ -1,7 +1,7 @@
 import { giveCurrentDateTime } from '../../utils/DateAndTime.js';
 
 import { decodeTokenAndGetId } from '../../utils/decodeTokenAndGetId.js';
-import { Users, Candidates, Companies, Jobs } from '../../models/User.js';
+import { Users, Candidates, Companies, Jobs,uploadresume } from '../../models/User.js';
 
 
 
