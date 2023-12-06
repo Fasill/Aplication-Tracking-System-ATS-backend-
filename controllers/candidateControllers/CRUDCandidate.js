@@ -6,7 +6,7 @@ import { Users, Candidates, Companies, Jobs,uploadresume } from '../../models/Us
 
 
 
-export const addClient = async (req, res) => {
+export const addCandidate = async (req, res) => {
   const {
     Name,
     PhoneNumber,
@@ -20,6 +20,7 @@ export const addClient = async (req, res) => {
     ExpectedCTC,
     Remarks,
     jobId,
+    
   } = req.body;
   const token = req.query.token;
   console.log(req.body)
@@ -61,6 +62,7 @@ export const addClient = async (req, res) => {
         JobId: parsedJobId,
         resumeUrl: resumeUrl,
         addedBy: userId,
+        status:"New"
       };
       const candidateRef = await Candidates.add(candidateInfo);
 
@@ -91,6 +93,8 @@ export const addClient = async (req, res) => {
         resumeUrl: resumeUrl,
         JobId: parsedJobId,
         addedBy: userId,
+        status:"New"
+
       };
 
       const candidateRef = await Candidates.add(candidateInfo);
@@ -107,8 +111,91 @@ export const addClient = async (req, res) => {
   }
 };
 
+export const editCandidate = async (req, res) => {
+  const {
+      Name,
+      PhoneNumber,
+      EmailID,
+      TotalExperience,
+      Education,
+      NoticePeriod,
+      CurrentLocation,
+      Skills,
+      CurrentCTC,
+      ExpectedCTC,
+      Remarks,
+      status,
+      jobId,
+      token
+  } = req.body;
+  const {email} = req.query
+  try {
+      // Parsing jobId to ensure it's an integer
+      const parsedJobId = parseInt(jobId);
 
+      // Decoding token to get userId
+      const userId = decodeTokenAndGetId(token);
 
-// Add the uploadresume function
+      // Retrieving user snapshot
+      const userSnapshot = await Users.doc(userId).get();
 
+      // Check if user exists
+      if (!userSnapshot.exists) {
+          return res.status(404).send({ message: 'User not found' });
+      }
 
+      // Retrieving job snapshot based on jobId
+      const jobSnapshot = await Jobs.where("JobId", "==", parsedJobId).get();
+
+      // Check if job exists
+      if (jobSnapshot.empty) {
+          return res.status(404).send({ message: "Job not found" });
+      }
+
+      // Extracting job data from the snapshot
+      const jobData = jobSnapshot.docs[0].data();
+
+      // Check if user is an admin for the specified job
+      const isAdmin = jobData.adminGroups && userId in jobData.adminGroups;
+
+      // If not an admin, send a forbidden response
+      if (!isAdmin) {
+          return res.status(403).send({ message: "User is not authorized to retrieve this candidate" });
+      }
+
+      // Retrieving candidates based on userId and jobId
+      const candidatesSnapshot = await Candidates.where("EmailID", "==", email)
+          .where("JobId", "==", parsedJobId)
+          .get();
+
+      // Check if candidates exist
+      if (candidatesSnapshot.empty) {
+          return res.status(404).send({ message: "Candidates not found for the specified criteria" });
+      }
+
+      // Assuming there's only one candidate for the specified criteria
+      const candidateId = candidatesSnapshot.docs[0].id;
+
+      // Update candidate data
+      await Candidates.doc(candidateId).update({
+          Name,
+          PhoneNumber,
+          EmailID,
+          TotalExperience,
+          Education,
+          NoticePeriod,
+          CurrentLocation,
+          Skills,
+          CurrentCTC,
+          ExpectedCTC,
+          Remarks,
+          status
+      });
+
+      res.status(200).send({ message: "Candidate information updated successfully" });
+  } catch (error) {
+      // Handling any errors that occurred during the process
+      console.error("Error updating candidate:", error);
+      res.status(500).send({ message: "Internal Server Error" });
+  }
+};
