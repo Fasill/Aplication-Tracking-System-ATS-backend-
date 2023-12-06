@@ -110,93 +110,96 @@ export const addCandidate = async (req, res) => {
     res.status(500).send({ message: 'Internal server error' });
   }
 };
-
 export const editCandidate = async (req, res) => {
   const {
-      Name,
-      PhoneNumber,
-      EmailID,
-      TotalExperience,
-      Education,
-      NoticePeriod,
-      CurrentLocation,
-      Skills,
-      CurrentCTC,
-      ExpectedCTC,
-      Remarks,
-      status,
-      jobId,
-      token
+    Name,
+    PhoneNumber,
+    EmailID,
+    TotalExperience,
+    Education,
+    NoticePeriod,
+    CurrentLocation,
+    Skills,
+    CurrentCTC,
+    ExpectedCTC,
+    Remarks,
+    status,
+    jobId,
+    token
   } = req.body;
-  const {email} = req.query
+
+  const { email } = req.query;
+
   try {
-      // Parsing jobId to ensure it's an integer
-      const parsedJobId = parseInt(jobId);
+    // Parsing jobId to ensure it's an integer
+    const parsedJobId = parseInt(jobId);
 
-      // Decoding token to get userId
-      const userId = decodeTokenAndGetId(token);
+    // Decoding token to get userId
+    const userId = decodeTokenAndGetId(token);
 
-      // Retrieving user snapshot
-      const userSnapshot = await Users.doc(userId).get();
+    // Retrieving user snapshot
+    const userSnapshot = await Users.doc(userId).get();
 
-      // Check if user exists
-      if (!userSnapshot.exists) {
-          return res.status(404).send({ message: 'User not found' });
-      }
+    // Check if user exists
+    if (!userSnapshot.exists) {
+      return res.status(404).send({ message: 'User not found' });
+    }
 
-      // Retrieving job snapshot based on jobId
-      const jobSnapshot = await Jobs.where("JobId", "==", parsedJobId).get();
+    // Retrieving job snapshot based on jobId
+    const jobSnapshot = await Jobs.where('JobId', '==', parsedJobId).get();
 
-      // Check if job exists
-      if (jobSnapshot.empty) {
-          return res.status(404).send({ message: "Job not found" });
-      }
+    // Check if job exists
+    if (jobSnapshot.empty) {
+      return res.status(404).send({ message: 'Job not found' });
+    }
 
-      
-      // Extracting job data from the snapshot
-      const jobData = jobSnapshot.docs[0].data();
+    // Extracting job data from the snapshot
+    const jobData = jobSnapshot.docs[0].data();
 
-      // Check if user is an admin for the specified job
-      const isAdmin = jobData.adminGroups && userId in jobData.adminGroups;
+    // Check if user is an admin for the specified job
+    const isAdmin = jobData.adminGroups && userId in jobData.adminGroups;
 
-      // If not an admin, send a forbidden response
-      if (!isAdmin) {
-          return res.status(403).send({ message: "User is not authorized to retrieve this candidate" });
-      }
+    // If not an admin, send a forbidden response
+    if (!isAdmin) {
+      return res.status(403).send({ message: 'User is not authorized to retrieve this candidate' });
+    }
 
-      // Retrieving candidates based on userId and jobId
-      const candidatesSnapshot = await Candidates.where("EmailID", "==", email)
-          .where("JobId", "==", parsedJobId)
-          .get();
+    // Retrieving candidates based on userId and jobId
+    const candidatesSnapshot = await Candidates.where('EmailID', '==', email)
+      .where('JobId', '==', parsedJobId)
+      .get();
 
-      // Check if candidates exist
-      if (candidatesSnapshot.empty) {
-          return res.status(404).send({ message: "Candidates not found for the specified criteria" });
-      }
+    // Check if candidates exist
+    if (candidatesSnapshot.empty) {
+      return res.status(404).send({ message: 'Candidates not found for the specified criteria' });
+    }
 
-      // Assuming there's only one candidate for the specified criteria
-      const candidateId = candidatesSnapshot.docs[0].id;
+    // Assuming there's only one candidate for the specified criteria
+    const candidateId = candidatesSnapshot.docs[0].id;
 
-      // Update candidate data
-      await Candidates.doc(candidateId).update({
-          Name,
-          PhoneNumber,
-          EmailID,
-          TotalExperience,
-          Education,
-          NoticePeriod,
-          CurrentLocation,
-          Skills,
-          CurrentCTC,
-          ExpectedCTC,
-          Remarks,
-          status
-      });
+    // Create an object with only defined values
+    const updatedCandidateData = {
+      ...(Name && { Name }),
+      ...(PhoneNumber && { PhoneNumber }),
+      ...(EmailID && { EmailID }),
+      ...(TotalExperience && { TotalExperience }),
+      ...(Education && { Education }),
+      ...(NoticePeriod && { NoticePeriod }),
+      ...(CurrentLocation && { CurrentLocation }),
+      ...(Skills && { Skills }),
+      ...(CurrentCTC && { CurrentCTC }),
+      ...(ExpectedCTC && { ExpectedCTC }),
+      ...(Remarks && { Remarks }),
+      ...(status && { status }),
+    };
 
-      res.status(200).send({ message: "Candidate information updated successfully" });
+    // Update candidate data with only defined values
+    await Candidates.doc(candidateId).update(updatedCandidateData);
+
+    res.status(200).send({ message: 'Candidate information updated successfully' });
   } catch (error) {
-      // Handling any errors that occurred during the process
-      console.error("Error updating candidate:", error);
-      res.status(500).send({ message: "Internal Server Error" });
+    // Handling any errors that occurred during the process
+    console.error('Error updating candidate:', error);
+    res.status(500).send({ message: 'Internal Server Error' });
   }
 };
