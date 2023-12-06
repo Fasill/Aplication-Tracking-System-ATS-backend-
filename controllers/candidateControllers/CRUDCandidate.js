@@ -152,6 +152,7 @@ export const editCandidate = async (req, res) => {
           return res.status(404).send({ message: "Job not found" });
       }
 
+      
       // Extracting job data from the snapshot
       const jobData = jobSnapshot.docs[0].data();
 
