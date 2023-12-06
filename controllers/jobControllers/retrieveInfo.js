@@ -117,7 +117,6 @@ export const retrieveUserRole = async (req, res) => {
     // Convert JobId to an integer
     JobId = parseInt(JobId, 10);
 
-    console.log(JobId);
 
     // Decode token to get userId
     const userId = decodeTokenAndGetId(token);

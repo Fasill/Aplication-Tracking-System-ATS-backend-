@@ -138,12 +138,6 @@ export const editCandidate = async (req, res) => {
     const userId = decodeTokenAndGetId(token);
 
     // Retrieving user snapshot
-    const userSnapshot = await Users.doc(userId).get();
-
-    // Check if user exists
-    if (!userSnapshot.exists) {
-      return res.status(404).send({ message: 'User not found' });
-    }
 
     // Retrieving job snapshot based on jobId
     const jobSnapshot = await Jobs.where('JobId', '==', parsedJobId).get();
