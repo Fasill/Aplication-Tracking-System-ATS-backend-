@@ -80,3 +80,42 @@ export const RetrieveCandidate = async (req, res) => {
         res.status(500).send({ message: "Internal Server Error" });
     }
 };
+
+export const searchByEmail = async (req, res) => {
+    try {
+        // Destructure token and EmailID from the request query
+        const { EmailID,token } = req.query;
+
+        // Decode the token to get the userId
+        const userId = decodeTokenAndGetId(token);
+
+        // Retrieve user data from the Users collection using the userId
+        const userSnapshot = await Users.doc(userId).get();
+
+        // Check if the user exists
+        if (!userSnapshot.exists) {
+            res.status(404).send({ message: 'User not found' });
+            return;
+        }
+
+        // Query the Candidates collection for candidates with the specified EmailID
+        const candidatesSnapshot = await Candidates.where("EmailID", "==", EmailID).get();
+
+        // Check if candidates were found for the specified criteria
+        if (candidatesSnapshot.empty) {
+            res.status(404).send({ message: "Candidates not found for the specified criteria" });
+            return;
+        }
+
+        // Extract data from the Candidates snapshot
+        const candidatesData = candidatesSnapshot.docs[0].data()
+
+        // Return the candidatesData in the response with a 200 OK status
+        return res.status(200).send({ candidatesData });
+
+    } catch (error) {
+        // Handle errors by logging and sending a generic error response
+        console.error("Error retrieving candidate:", error);
+        res.status(500).send({ message: "Internal Server Error" });
+    }
+};
