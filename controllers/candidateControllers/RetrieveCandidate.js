@@ -1,7 +1,7 @@
 import { Users, Jobs, Candidates } from '../../models/User.js';
 import { decodeTokenAndGetId } from '../../utils/decodeTokenAndGetId.js';
 
-export const RetrieveCandidateForRecruiters = async (req, res) => {
+export const RetrieveCandidateUnderAJobForRecruiters = async (req, res) => {
     try {
         // Destructuring the values from req.query
         const { token, jobId } = req.query;
@@ -154,6 +154,7 @@ export const RetrieveCandidateForAdmins = async (req, res) => {
         res.status(500).send({ message: "Internal Server Error" });
     }
 };
+
 export const searchByEmail = async (req, res) => {
     try {
         // Destructure token and EmailID from the request query
@@ -190,5 +191,41 @@ export const searchByEmail = async (req, res) => {
         // Handle errors by logging and sending a generic error response
         console.error("Error retrieving candidate:", error);
         res.status(500).send({ message: "Internal Server Error" });
+    }
+};
+
+export const RetrieveAllCandidatesForRecruiters = async (req, res) => {
+    try {
+        const { token, Name } = req.query;
+        const userId = decodeTokenAndGetId(token);
+        const userSnapshot = await Users.doc(userId).get();
+
+        if (!userSnapshot.exists) {
+            return res.status(404).send({ message: 'User not found' });
+        }
+
+        const CandidatesSnapshot = await Candidates.where("addedBy", "==", userId);
+
+        if (CandidatesSnapshot.empty) {
+            return res.status(404).send({ message: "Candidates not found for the specified criteria" });
+        }
+
+        const candidatesData = CandidatesSnapshot.docs.map(doc => doc.data());
+
+        if (Name === '') {
+            return res.status(200).send({ message: "Candidates retrieved successfully", candidates: candidatesData });
+        }
+
+        const filteredCandidates = candidatesData.filter(candidate => {
+            const candidateName = candidate.Name.toLowerCase();
+            const providedName = Name.toLowerCase();
+            return candidateName.startsWith(providedName) || candidateName === providedName;
+        });
+
+        return res.status(200).send({ message: "Candidates retrieved successfully", candidates: filteredCandidates });
+
+    } catch (error) {
+        console.error("Error retrieving candidate:", error);
+        return res.status(500).send({ message: "Internal Server Error" });
     }
 };

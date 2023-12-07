@@ -3,8 +3,8 @@ import multer from 'multer';
 import {addCandidate,editCandidate } from '../controllers/candidateControllers/CRUDCandidate.js'
 import {DeleteCandidate} from '../models/User.js'
 import { validateTokenMiddleware } from '../middleware/JwtMiddlewareToProtectHomePage.js';
-import {RetrieveCandidateForRecruiters,RetrieveCandidateForAdmins,searchByEmail} from '../controllers/candidateControllers/RetrieveCandidate.js';
-
+import {RetrieveAllCandidatesForRecruiters,RetrieveCandidateUnderAJobForRecruiters,RetrieveCandidateForAdmins,searchByEmail} from '../controllers/candidateControllers/RetrieveCandidate.js';
+import {AllCandidates} from '../controllers/candidateControllers/AllCandidates.js';
 // Create an instance of Express Router
 const candidateRouter = express.Router();
 
@@ -13,8 +13,11 @@ const upload = multer({ storage: multer.memoryStorage() });
 
 candidateRouter.post('/upload-resume', validateTokenMiddleware, upload.single('filename'), addCandidate);
 candidateRouter.put('/edit-candidates',validateTokenMiddleware,editCandidate);
-candidateRouter.get('/get-candidates',validateTokenMiddleware,RetrieveCandidateForRecruiters);
+candidateRouter.get('/get-candidates',validateTokenMiddleware,RetrieveCandidateUnderAJobForRecruiters);
 candidateRouter.get('/get-all-candidates',validateTokenMiddleware,RetrieveCandidateForAdmins);
+candidateRouter.get('/get-all-candidates2',validateTokenMiddleware,RetrieveAllCandidatesForRecruiters);
+candidateRouter.get('/All-Candidates',validateTokenMiddleware,AllCandidates);
+
 candidateRouter.get('/get-candidates-by-email',validateTokenMiddleware,searchByEmail);
 
 candidateRouter.delete('/delete-candidates',validateTokenMiddleware,DeleteCandidate);
