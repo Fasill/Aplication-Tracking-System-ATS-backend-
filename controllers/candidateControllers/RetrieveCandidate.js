@@ -204,7 +204,7 @@ export const RetrieveAllCandidatesForRecruiters = async (req, res) => {
             return res.status(404).send({ message: 'User not found' });
         }
 
-        const CandidatesSnapshot = await Candidates.where("addedBy", "==", userId);
+        const CandidatesSnapshot = await Candidates.where("addedBy", "==", userId).get()
 
         if (CandidatesSnapshot.empty) {
             return res.status(404).send({ message: "Candidates not found for the specified criteria" });
