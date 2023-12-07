@@ -2,6 +2,7 @@ import { Users, Jobs, Candidates } from '../../models/User.js';
 import { decodeTokenAndGetId } from '../../utils/decodeTokenAndGetId.js';
 
 export const AllCandidates = async (req, res) => {
+  
   try {
     const { token, Name } = req.query;
     const userId = decodeTokenAndGetId(token);

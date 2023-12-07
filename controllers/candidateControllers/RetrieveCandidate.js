@@ -119,6 +119,7 @@ export const RetrieveCandidateForAdmins = async (req, res) => {
 
         // Retrieving candidates based on userId and jobId
         const CandidatesSnapshot = await Candidates
+            .where("addedBy","==",userId)
             .where("JobId", "==", parsedJobId)
             .get();
 
@@ -198,12 +199,7 @@ export const RetrieveAllCandidatesForRecruiters = async (req, res) => {
     try {
         const { token, Name } = req.query;
         const userId = decodeTokenAndGetId(token);
-        const userSnapshot = await Users.doc(userId).get();
-
-        if (!userSnapshot.exists) {
-            return res.status(404).send({ message: 'User not found' });
-        }
-
+        
         const CandidatesSnapshot = await Candidates.where("addedBy", "==", userId).get()
 
         if (CandidatesSnapshot.empty) {
@@ -229,3 +225,88 @@ export const RetrieveAllCandidatesForRecruiters = async (req, res) => {
         return res.status(500).send({ message: "Internal Server Error" });
     }
 };
+export const RetrieveCandidatesForAdminOrRecruiter = async (req, res) => {
+    try {
+      const { token, Name } = req.query;
+      const userId = decodeTokenAndGetId(token);
+  
+      // Get all jobs where the user has an admin or recruiter role
+      const jobsSnapshot = await Jobs
+        .where(`adminGroups.${userId}.Role`, "in", ['Admin', 'Recruiter'])
+        .get();
+  
+      const jobsData = jobsSnapshot.docs.map(doc => doc.data());
+  
+      if (jobsData.length === 0) {
+        res.status(403).send({ message: "Unauthorized access. User is not an admin or recruiter for any jobs." });
+        return;
+      }
+  
+      // Common logic for both Admin and Recruiter
+      const fetchCandidates = async (candidateIds) => {
+        const candidatesPromises = candidateIds.map(async candidateId => {
+          try {
+            const candidateDoc = await Candidates.doc(candidateId).get();
+            if (candidateDoc.exists) {
+              const candidateData = candidateDoc.data();
+              if (!Name || candidateData.Name.toLowerCase().includes(Name.toLowerCase())) {
+                return { ...candidateData, id: candidateId }; // Flatten the structure
+              } else {
+                return null; // Skip if the name does not match the filter
+              }
+            } else {
+              return null;
+            }
+          } catch (error) {
+            console.error(`Error fetching candidate ${candidateId}:`, error);
+            return null;
+          }
+        });
+  
+        const candidatesResults = await Promise.all(candidatesPromises);
+        return candidatesResults.filter(result => result !== null);
+      };
+  
+      // Fetch candidates based on user role
+      const candidatesPromises = jobsData.map(async job => {
+        const jobId = job.id;
+  
+        if (job.adminGroups[userId].Role === 'Admin') {
+          // User is an Admin, retrieve all candidates for the job
+          const candidatesIds = job.candidates || [];
+          const candidates = await fetchCandidates(candidatesIds);
+          return candidates.map(candidate => ({ ...candidate, jobId }));
+        } else if (job.adminGroups[userId].Role === 'Recruiter') {
+          // User is a Recruiter, retrieve candidates added by the user
+          const candidatesSnapshot = await Candidates.where("addedBy", "==", userId).get();
+  
+          if (candidatesSnapshot.empty) {
+            return [];
+          }
+  
+          const candidatesData = candidatesSnapshot.docs.map(doc => doc.data());
+  
+          if (Name === '') {
+            return candidatesData.map(candidate => ({ ...candidate, jobId }));
+          }
+  
+          const filteredCandidates = candidatesData.filter(candidate => {
+            const candidateName = candidate.Name.toLowerCase();
+            const providedName = Name.toLowerCase();
+            return candidateName.startsWith(providedName) || candidateName === providedName;
+          });
+  
+          return filteredCandidates.map(candidate => ({ ...candidate, jobId }));
+        }
+      });
+  
+      const results = await Promise.all(candidatesPromises);
+      const flattenedResults = results.flat();
+  
+      res.status(200).send({ message: "Candidates retrieved successfully", data: { candidates: flattenedResults } });
+    } catch (error) {
+      console.error("Error retrieving candidates:", error);
+      res.status(500).send({ message: "Internal Server Error" });
+    }
+  };
+  
