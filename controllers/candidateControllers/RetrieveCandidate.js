@@ -119,7 +119,7 @@ export const RetrieveCandidateForAdmins = async (req, res) => {
 
         // Retrieving candidates based on userId and jobId
         const CandidatesSnapshot = await Candidates
-            .where("addedBy","==",userId)
+            
             .where("JobId", "==", parsedJobId)
             .get();
 
