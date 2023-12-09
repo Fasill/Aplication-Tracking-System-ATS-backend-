@@ -16,3 +16,17 @@ export const decodeTokenAndGetId = (token) => {
     return null; // Return null or another appropriate value in case of an error
   }
 };
+
+
+
+// Function to decode a token and retrieve the email
+export const getEmailFromToken = (token) => {
+  try {
+    const decoded = jwt.verify(token, secretKey);
+    return decoded.email;
+  } catch (error) {
+    console.error('Error decoding token:', error);
+    return null;
+  }
+};
+

@@ -32,3 +32,16 @@ export const generateTokenforOtpVerificationpage = (userId) => {
     return null;
   }
 };
+
+export const generateTokenForClient = (email)=>{
+  try {
+    const token = jwt.sign({ email: email }, secretKey, {
+      expiresIn: '1h',
+    });
+    return token;
+  } catch (error) {
+    console.error('Error generating client verification token:', error);
+    return null;
+  }
+};
+

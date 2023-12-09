@@ -3,6 +3,7 @@ import nodemailer from 'nodemailer';
 import fsPromises from 'fs/promises';
 
 import { Users, Jobs, Candidates } from '../../models/User.js';
+import {getFilteredCandidatesData} from '../../utils/getCandidates.js';
 
 const EMAIL_CONFIG = {
   service: 'Gmail',
@@ -29,7 +30,7 @@ export const NotifyClient = async (req, res) => {
 
     await sendEmail(filteredCandidatesData, jobData.clientEmail, subject, text, sendCandidateStatus);
 
-    
+
     res.status(200).send({ message: 'Email sent successfully' });
   } catch (error) {
     console.error('Error:', error.message || error);
@@ -42,24 +43,7 @@ const getJobData = async (parsedJobId) => {
   return jobSnapshot.empty ? null : jobSnapshot.docs[0].data();
 };
 
-const getFilteredCandidatesData = async (candidateIds, status) => {
-  const candidatePromises = candidateIds.map(async (candidateId) => {
-    const candidateSnapshot = await Candidates.doc(candidateId).get();
 
-    if (candidateSnapshot.exists) {
-      const candidateData = candidateSnapshot.data();
-      if (!status || status === 'All' || candidateData.status === status) {
-        const { JobId, CurrentLocation, addedBy, ...filteredCandidateData } = candidateData;
-        return filteredCandidateData;
-      }
-    }
-
-    return null;
-  });
-
-  const candidatesData = await Promise.all(candidatePromises);
-  return candidatesData.filter((candidate) => candidate !== null);
-};
 
 const convertJsonToExcel = async (jsonArray) => {
   try {
