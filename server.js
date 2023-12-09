@@ -7,6 +7,7 @@ import jobRouter from "./router/jobRouter.js";
 import commentRouter from './router/commentRouter.js';
 import userAuthRouter from './utils/uploadresume.js';
 import candidateRouter from './router/candidateRouter.js';
+import clientRouter from './router/clientRouter.js';
 
 const app = express();
 
@@ -19,6 +20,7 @@ app.use(router);
 app.use(candidateRouter)
 app.use('/jobs',jobRouter);
 app.use('/comment',commentRouter);
+app.use('/client',clientRouter)
 app.use(userAuthRouter);
 
 const port =  8080; // Use the environment-provided port or 8080 as a fallback

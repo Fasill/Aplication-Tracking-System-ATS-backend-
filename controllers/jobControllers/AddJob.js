@@ -12,6 +12,7 @@ export const AddJob = (req, res) => {
     mandatorySkills,
     optionalSkills,
     clientName,
+    clientEmail,
     openings,
     remarks,
     token,
@@ -46,6 +47,7 @@ export const AddJob = (req, res) => {
         mandatorySkills,
         optionalSkills,
         clientName,
+        clientEmail,
         openings,
         remarks, 
         adminGroups: { [id]: { Role: "Admin" } }, 
@@ -59,7 +61,6 @@ export const AddJob = (req, res) => {
       return Jobs.add(job);
     })
     .then((docRef) => {
-      console.log('Job added with ID: ', docRef.id);
       res.status(201).json({ message: 'Job added successfully' });
     })
     .catch((error) => {

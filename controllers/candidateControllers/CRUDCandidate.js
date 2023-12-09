@@ -7,6 +7,7 @@ import { Users, Candidates, Companies, Jobs,uploadresume } from '../../models/Us
 
 
 export const addCandidate = async (req, res) => {
+
   const {
     Name,
     PhoneNumber,
@@ -23,7 +24,6 @@ export const addCandidate = async (req, res) => {
     
   } = req.body;
   const token = req.query.token;
-  console.log(req.body)
   try {
     const userId = decodeTokenAndGetId(token);
     const userSnapshot = await Users.doc(userId).get();
