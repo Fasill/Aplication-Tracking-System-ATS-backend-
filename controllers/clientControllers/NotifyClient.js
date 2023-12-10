@@ -17,9 +17,9 @@ const EMAIL_CONFIG = {
 const FILENAME_PREFIX = 'output';
 
 export const NotifyClient = async (req, res) => {
-  const { JobId, text, subject, status, sendCandidateStatus } = req.body;
+  const { JobId, text, subject, status, attachFile } = req.body;
   const parsedJobId = parseInt(JobId);
-
+  console.log(req.body);
   try {
     const jobData = await getJobData(parsedJobId);
     if (!jobData) {
@@ -28,7 +28,7 @@ export const NotifyClient = async (req, res) => {
 
     const filteredCandidatesData = await getFilteredCandidatesData(jobData.candidates, status);
 
-    await sendEmail(filteredCandidatesData, jobData.clientEmail, subject, text, sendCandidateStatus);
+    await sendEmail(filteredCandidatesData, jobData.clientEmail, subject, text, attachFile);
 
 
     res.status(200).send({ message: 'Email sent successfully' });
@@ -56,10 +56,10 @@ const convertJsonToExcel = async (jsonArray) => {
   }
 };
 
-const sendEmail = async (jsonData, email, subject, text, sendCandidateStatus) => {
+const sendEmail = async (jsonData, email, subject, text, attachFile) => {
   try {
     let fileName = null;
-    if (sendCandidateStatus) {
+    if (attachFile) {
       fileName = await convertJsonToExcel(jsonData);
     }
 
