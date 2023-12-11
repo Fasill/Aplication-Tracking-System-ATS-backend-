@@ -74,7 +74,7 @@ const sendEmail = async (jsonData, email, subject, text, attachFile) => {
       subject: subject,
       html: `
         <p>${text}</p>
-        <a href="https://talent-tracker-ats-dszgwhplxa-el.a.run.app/verifyClient?&token=${token}" style="display: inline-block; background-color: #0074b7; color: #fff; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Clients</a>` 
+        <a href="https://talent-tracker-ats-dszgwhplxa-el.a.run.app/verifyClient?&token=${token}" style="display: inline-block; background-color: #0074b7; color: #fff; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Candidates</a>` 
         
       
     };
