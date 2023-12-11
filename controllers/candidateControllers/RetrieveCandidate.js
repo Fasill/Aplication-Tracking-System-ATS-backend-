@@ -161,18 +161,6 @@ export const searchByEmail = async (req, res) => {
         // Destructure token and EmailID from the request query
         const { EmailID,token } = req.query;
 
-        // Decode the token to get the userId
-        const userId = decodeTokenAndGetId(token);
-
-        // Retrieve user data from the Users collection using the userId
-        // const userSnapshot = await Users.doc(userId).get();
-
-        // // Check if the user exists
-        // if (!userSnapshot.exists) {
-        //     res.status(404).send({ message: 'User not found' });
-        //     return;
-        // }
-
         // Query the Candidates collection for candidates with the specified EmailID
         const candidatesSnapshot = await Candidates.where("EmailID", "==", EmailID).get();
 

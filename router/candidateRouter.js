@@ -5,6 +5,8 @@ import {DeleteCandidate} from '../models/User.js'
 import { validateTokenMiddleware } from '../middleware/JwtMiddlewareToProtectHomePage.js';
 import {RetrieveAllCandidatesForRecruiters,RetrieveCandidateUnderAJobForRecruiters,RetrieveCandidateForAdmins,searchByEmail,RetrieveCandidatesForAdminOrRecruiter} from '../controllers/candidateControllers/RetrieveCandidate.js';
 import {AllCandidates} from '../controllers/candidateControllers/AllCandidates.js';
+import {verifyTokenMiddlewareForClient} from '../middleware/jwtmiddlewareforClient.js';
+
 // Create an instance of Express Router
 const candidateRouter = express.Router();
 

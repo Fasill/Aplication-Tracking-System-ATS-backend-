@@ -4,7 +4,7 @@ import {getFilteredCandidatesData} from '../../utils/getCandidates.js';
 
 export const retrieveCandidates = async (req, res) => {
     const token  = req.query.token;
-
+    const status = req.query.status;
     try {
         
         console.log(token)
@@ -16,7 +16,7 @@ export const retrieveCandidates = async (req, res) => {
         }
 
         const jobData = jobSnapshot.docs[0].data(); // Use "docs" instead of "doc"
-        const candidates = await getFilteredCandidatesData(jobData.candidates, "All");
+        const candidates = await getFilteredCandidatesData(jobData.candidates, status);
 
         return res.status(200).send({ candidates });
     } catch (e) {

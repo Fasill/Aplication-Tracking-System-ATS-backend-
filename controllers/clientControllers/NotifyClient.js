@@ -4,6 +4,7 @@ import fsPromises from 'fs/promises';
 
 import { Users, Jobs, Candidates } from '../../models/User.js';
 import {getFilteredCandidatesData} from '../../utils/getCandidates.js';
+import {generateTokenForClient} from '../../utils/tokenGenerator.js';
 
 const EMAIL_CONFIG = {
   service: 'Gmail',
@@ -17,9 +18,11 @@ const EMAIL_CONFIG = {
 const FILENAME_PREFIX = 'output';
 
 export const NotifyClient = async (req, res) => {
+
   const { JobId, text, subject, status, attachFile } = req.body;
   const parsedJobId = parseInt(JobId);
   console.log(req.body);
+
   try {
     const jobData = await getJobData(parsedJobId);
     if (!jobData) {
@@ -57,6 +60,7 @@ const convertJsonToExcel = async (jsonArray) => {
 };
 
 const sendEmail = async (jsonData, email, subject, text, attachFile) => {
+  const token =  generateTokenForClient(email) 
   try {
     let fileName = null;
     if (attachFile) {
@@ -69,7 +73,7 @@ const sendEmail = async (jsonData, email, subject, text, attachFile) => {
       from: EMAIL_CONFIG.auth.user,
       to: email,
       subject: subject,
-      text: text,
+      text: `${text} http://localhost:8080/verifyClient?token=${token}`,
     };
 
     if (fileName) {
