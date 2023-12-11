@@ -197,3 +197,84 @@ export const editCandidate = async (req, res) => {
     res.status(500).send({ message: 'Internal Server Error' });
   }
 };
+
+export const editCandidateForClient = async (req, res) => {
+  const {
+    Name,
+    PhoneNumber,
+    EmailID,
+    TotalExperience,
+    Education,
+    NoticePeriod,
+    CurrentLocation,
+    Skills,
+    CurrentCTC,
+    ExpectedCTC,
+    Remarks,
+    status,
+    jobId,
+    
+  } = req.body;
+
+  const { email } = req.query;
+
+  try {
+    // Parsing jobId to ensure it's an integer
+    const parsedJobId = parseInt(jobId);
+
+    // Decoding token to get userId
+
+    // Retrieving user snapshot
+
+    // Retrieving job snapshot based on jobId
+    const jobSnapshot = await Jobs.where('JobId', '==', parsedJobId).get();
+
+    // Check if job exists
+    if (jobSnapshot.empty) {
+      return res.status(404).send({ message: 'Job not found' });
+    }
+
+    // Extracting job data from the snapshot
+    const jobData = jobSnapshot.docs[0].data();
+
+    // Check if user is an admin for the specified job
+    
+    // Retrieving candidates based on userId and jobId
+    const candidatesSnapshot = await Candidates.where('EmailID', '==', email)
+      .where('JobId', '==', parsedJobId)
+      .get();
+
+    // Check if candidates exist
+    if (candidatesSnapshot.empty) {
+      return res.status(404).send({ message: 'Candidates not found for the specified criteria' });
+    }
+
+    // Assuming there's only one candidate for the specified criteria
+    const candidateId = candidatesSnapshot.docs[0].id;
+
+    // Create an object with only defined values
+    const updatedCandidateData = {
+      ...(Name && { Name }),
+      ...(PhoneNumber && { PhoneNumber }),
+      ...(EmailID && { EmailID }),
+      ...(TotalExperience && { TotalExperience }),
+      ...(Education && { Education }),
+      ...(NoticePeriod && { NoticePeriod }),
+      ...(CurrentLocation && { CurrentLocation }),
+      ...(Skills && { Skills }),
+      ...(CurrentCTC && { CurrentCTC }),
+      ...(ExpectedCTC && { ExpectedCTC }),
+      ...(Remarks && { Remarks }),
+      ...(status && { status }),
+    };
+
+    // Update candidate data with only defined values
+    await Candidates.doc(candidateId).update(updatedCandidateData);
+
+    res.status(200).send({ message: 'Candidate information updated successfully' });
+  } catch (error) {
+    // Handling any errors that occurred during the process
+    console.error('Error updating candidate:', error);
+    res.status(500).send({ message: 'Internal Server Error' });
+  }
+};

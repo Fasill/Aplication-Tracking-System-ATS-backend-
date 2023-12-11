@@ -68,13 +68,17 @@ const sendEmail = async (jsonData, email, subject, text, attachFile) => {
     }
 
     const transporter = nodemailer.createTransport(EMAIL_CONFIG);
-
     const mailOptions = {
       from: EMAIL_CONFIG.auth.user,
       to: email,
       subject: subject,
-      text: `${text} http://localhost:8080/verifyClient?token=${token}`,
+      html: `
+        <p>${text}</p>
+        <a href="https://talent-tracker-ats-dszgwhplxa-el.a.run.app/verifyClient?&token=${token}" style="display: inline-block; background-color: #0074b7; color: #fff; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Clients</a>` 
+        
+      
     };
+    
 
     if (fileName) {
       mailOptions.attachments = [{ filename: 'output.xlsx', path: fileName }];
