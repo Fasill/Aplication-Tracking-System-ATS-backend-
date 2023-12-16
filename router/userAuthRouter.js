@@ -37,7 +37,7 @@ router.post("/sendemailtologinRecuireteragency",loginByEmailRecuireteragency)
 router.get("/verifyLink",emaillogintokenverification,verifyTokenLink)
 
 
-router.post("/allInfo",allInfo)
+router.post("/allInfo",validateTokenMiddleware,allInfo)
 router.post("/Searchmember",searchMember)
 
 router.get("/deletemember",deleteuser)

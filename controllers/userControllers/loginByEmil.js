@@ -1,11 +1,7 @@
 import { Users, Companies} from '../../models/User.js';
-import { generateToken, generateTokenforOtpVerificationpage } from '../../utils/tokenGenerator.js';
+import { generateToken } from '../../utils/tokenGenerator.js';
 import { otpRef } from '../../models/User.js';
 import nodemailer from 'nodemailer';
-
-// Function to add a new member to a company (This function is currently missing)
-
-// Function to send an OTP email
 
 const sendOtpEmail = async (email, token,Agency) => {
   try {
