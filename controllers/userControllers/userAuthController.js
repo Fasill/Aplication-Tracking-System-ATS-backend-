@@ -7,17 +7,18 @@ import { decodeTokenAndGetId } from '../../utils/decodeTokenAndGetId.js';
 
 
 export const signUp = async (req, res) => {
+  console.log("hello")
   try {
     const {
-      email,
       phoneNumber,
       name,
-      password,
       address,
       city,
       state,
       country,
-      type
+      type,
+      email,
+      ownerName
     } = req.body;
 
     // Check if the user with the same email already exists
@@ -28,25 +29,32 @@ export const signUp = async (req, res) => {
     }
 
     // Hash the password before storing it
-    const saltRounds = 10;
-    const hashedPassword = await bcrypt.hash(password, saltRounds);
-
+  
     // Add the user to the database with the hashed password
-    const userDoc = await Companies.add({
+     const  Agency = await Companies.add({
       email,
       type,
       phoneNumber,
-      password: hashedPassword, // Store the hashed password in the database
       name,
       address,
       city,
       state,
       country,
       verified: false,
-      users: []
+      user: [email]
     });
-
-    const userId = userDoc.id;
+    
+    const userDoc = await Users.add({
+      name :ownerName,
+      email,
+      role:"Owner",
+      verified: false,
+      mappedJobs:[],
+      AcceptedJobs:[]
+    })
+    
+    const userId = Agency.id;
+    console.log(userId)
 
     // Generate a token for the user
     const token = generateToken(userId);
