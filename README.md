@@ -1,3 +1,4 @@
+
 # Application Tracking System (ATS) Backend
 
 Welcome to the Application Tracking System (ATS) Backend! This Node.js application, powered by Firestore as the database, serves as the backend for managing job applications and related data. It provides 48 endpoints to handle various operations related to job applications, users, and more.
@@ -32,7 +33,12 @@ The backend provides 48 endpoints to perform various actions. These endpoints ar
 - **Analytics**: Endpoints to retrieve analytics data related to job applications, user activity, etc.
 - **Miscellaneous**: Additional endpoints for various functionalities, such as sending emails, managing notifications, etc.
 
+## Postman Collection
 
+To explore and interact with all endpoints conveniently, import the provided Postman collection: [ATS Postman Endpoints Collection](https://github.com/Fasill/Aplication-Tracking-System-ATS-backend-/blob/main/ats-postman-endpoints.json).
+## Deployment
+
+You can access the deployed backend via the following link: [ATS Backend Deployed Link](https://aplication-tracking-system-ats-backend.onrender.com).
 
 ## Support
 
