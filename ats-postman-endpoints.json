@@ -1,0 +1,900 @@
+{
+	"info": {
+		"_postman_id": "fb28dda4-843c-4b97-8f82-52f120acf4d3",
+		"name": "Serivago",
+		"description": "# ⛓️ Get started here\n\nPostman allows you to test your APIs using simple [Javascript code](https://learning.postman.com/docs/writing-scripts/intro-to-scripts/). You can evaluate your response body, headers, cookies, and more using the [ChaiJS BDD](https://www.chaijs.com/api/bdd/) syntax.\n\nThis template guides you through the process of setting up an integration test to ensure that all individual components of an API function together seamlessly.\n\nThe API under test in this collection includes three endpoints for registering and receiving a token, accessing your unique generated name, and unregistering a token:\n\n- POST `/register`\n- POST `/unregister`\n- GET `/my-name`\n    \n\nBy setting up requests in the order of the operation, we can test the flow of data to and from the endpoints and ensure they work together as expected. We also verify that the data persists between requests on the back end.\n\n## 🔖 **How to use this template**\n\n**Step 1:** Check out the requests' documentation to learn more about -\n\n- what each request is meant to do.\n- the tests we've added against each one.\n    \n\n**Step 2:** Run this collection by clicking on \"Run\" or the by using the [Collection Runner](https://learning.postman.com/docs/collections/running-collections/intro-to-collection-runs/).\n\n<img src=\"https://content.pstmn.io/84019b0f-69c8-4c5f-98b9-2c90a6f9a0b1/Y29sbGVjdGlvbi1ydW5uZXItYnV0dG9uLmpwZWc=\" width=\"266\" height=\"103\">\n\n**Step 3:** To customize this template, replace the request URLs with your API endpoints and add or edit the tests if needed.\n\n## 💡Related templates\n\n[Regression testing](https://go.postman.co/redirect/workspace?type=personal&collectionTemplateId=7ab0f80e-a964-46ee-b948-4a4e3a85809c&sourceTemplateId=fe506090-ca91-4340-bea9-82d2c3d2bb9a)  \n[Performance testing](https://go.postman.co/redirect/workspace?type=personal&collectionTemplateId=3302192d-87dd-4612-b381-61894de21203&sourceTemplateId=fe506090-ca91-4340-bea9-82d2c3d2bb9a)  \n[Contract testing](https://go.postman.co/redirect/workspace?type=personal&collectionTemplateId=42247877-8529-429d-acba-4de20c3b5b3b&sourceTemplateId=fe506090-ca91-4340-bea9-82d2c3d2bb9a)  \n[Conditional workflow](https://go.postman.co/redirect/workspace?type=personal&collectionTemplateId=78475d97-9a36-4731-ab24-9adf6a94d0fb&sourceTemplateId=fe506090-ca91-4340-bea9-82d2c3d2bb9a)  \n[Mock data generation](https://go.postman.co/redirect/workspace?type=personal&collectionTemplateId=da8ceebc-d4da-478c-ab8a-37634faefc74&sourceTemplateId=fe506090-ca91-4340-bea9-82d2c3d2bb9a)  \n[Common API vulnerabilities check](https://go.postman.co/redirect/workspace?type=personal&collectionTemplateId=e1edbae8-6429-453d-890e-00385eea1811&sourceTemplateId=fe506090-ca91-4340-bea9-82d2c3d2bb9a)",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "25419668"
+	},
+	"item": [
+		{
+			"name": "Jobs",
+			"item": [
+				{
+					"name": "GenerateToken",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://test-back-end-dszgwhplxa-el.a.run.app/FastLogin",
+							"protocol": "https",
+							"host": [
+								"test-back-end-dszgwhplxa-el",
+								"a",
+								"run",
+								"app"
+							],
+							"path": [
+								"FastLogin"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Map A user",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"An access token is returned\", () => {",
+									"    pm.expect(pm.response.json()).to.have.property('token')",
+									"    pm.expect(pm.response.json().token).to.be.a('string')",
+									"    // Set the collection-scope \"token\" variable to the token received from the API",
+									"    // This lets us use it in other requests",
+									"    pm.collectionVariables.set('token', pm.response.json().token)",
+									"})",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"JobId\":21258,\n    \"Role\":\"Recruiter\",\n\n            \"email\": \"test2@g.com\",\n\n    \"token\":\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IkNOZng2SkRUTDQ4YmxHd1F6MmgxIiwiaWF0IjoxNjk5ODc0MzIyLCJleHAiOjE2OTk4Nzc5MjJ9.ZUSkXorxnZHlj84BFbStJb2TVI3FNu9qd9WDKuYAOr0\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://test-back-end-dszgwhplxa-el.a.run.app/jobs/MapAUser",
+							"protocol": "https",
+							"host": [
+								"test-back-end-dszgwhplxa-el",
+								"a",
+								"run",
+								"app"
+							],
+							"path": [
+								"jobs",
+								"MapAUser"
+							]
+						},
+						"description": "This returns a `token` that you can use to retrieve information later on.\n\nWe have included a test to confirm if a token is returned. We have also added test scripts to copy the token to the `token` collection variable. This makes it easy for us to reuse this token in other requests in the collection."
+					},
+					"response": []
+				},
+				{
+					"name": "UnmapUser",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "JobId",
+								"value": "21258",
+								"type": "text"
+							},
+							{
+								"key": "email",
+								"value": "teste1@g.com",
+								"type": "text"
+							},
+							{
+								"key": "token",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IkNOZng2SkRUTDQ4YmxHd1F6MmgxIiwiaWF0IjoxNjk5NzkwMDA4LCJleHAiOjE2OTk3OTM2MDh9.j636tiEtUzG-cz4f99NmE4yfox-DXJbC6fVWdSYuF2o",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8080/jobs/unmapuser?JobId=21258&email=teste1@g.com&token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IkNOZng2SkRUTDQ4YmxHd1F6MmgxIiwiaWF0IjoxNjk5ODA1ODM5LCJleHAiOjE2OTk4MDk0Mzl9.lXZv90LEHy7peZHvtgzg92Yb7A955Lun8bZq7Mfs8CE",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"jobs",
+								"unmapuser"
+							],
+							"query": [
+								{
+									"key": "JobId",
+									"value": "21258"
+								},
+								{
+									"key": "email",
+									"value": "teste1@g.com"
+								},
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IkNOZng2SkRUTDQ4YmxHd1F6MmgxIiwiaWF0IjoxNjk5ODA1ODM5LCJleHAiOjE2OTk4MDk0Mzl9.lXZv90LEHy7peZHvtgzg92Yb7A955Lun8bZq7Mfs8CE"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "acceptJob",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"JobId\": 83153,\n    \"email\": \"teste1@g.com\",\n    \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZmQTRKYmZFdnFPTnRJVElPZFdKIiwiaWF0IjoxNzAwMjA4NDQ4LCJleHAiOjE3MDAyMTIwNDh9.L2zp1I0s4jeKWb4X4QoLR6f0W3GZ-naPfzHsj-Ie6Ng\"}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://test-back-end-dszgwhplxa-el.a.run.app/jobs/acceptJob",
+							"protocol": "https",
+							"host": [
+								"test-back-end-dszgwhplxa-el",
+								"a",
+								"run",
+								"app"
+							],
+							"path": [
+								"jobs",
+								"acceptJob"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "rejectJob",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/jobs/rejectJob?JobId=21258&token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZmQTRKYmZFdnFPTnRJVElPZFdKIiwiaWF0IjoxNzAwMDUwODQ1LCJleHAiOjE3MDAwNTQ0NDV9.3mYbGiy2aNjcD6a2ghJ2coY_JbSQu6J6Iy2SltObFvc",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"jobs",
+								"rejectJob"
+							],
+							"query": [
+								{
+									"key": "JobId",
+									"value": "21258"
+								},
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZmQTRKYmZFdnFPTnRJVElPZFdKIiwiaWF0IjoxNzAwMDUwODQ1LCJleHAiOjE3MDAwNTQ0NDV9.3mYbGiy2aNjcD6a2ghJ2coY_JbSQu6J6Iy2SltObFvc"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Map Multiple Users",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{   \"JobId\":21258,\n    \"token\":\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IkNOZng2SkRUTDQ4YmxHd1F6MmgxIiwiaWF0IjoxNjk5ODgzMzA5LCJleHAiOjE2OTk4ODY5MDl9.vewu0baKDLRc858rZrLhhQExthqgyHBT253VaerxOig\",\n\n    \"selectedUsers\": [\n        {\n            \"email\": \"test1@g.com\",\n            \"role\": \"Recruiter\"\n        },\n        {\n            \"email\": \"test3@g.com\",\n            \"role\": \"Recruiter\"\n        }\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/jobs/MapUsers",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"jobs",
+								"MapUsers"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "retrive mapped jobs",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/jobs/MappedJobs?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZmQTRKYmZFdnFPTnRJVElPZFdKIiwiaWF0IjoxNjk5OTQ5NjY5LCJleHAiOjE2OTk5NTMyNjl9.N6H5Q8r8nCq7MrRz4dAll8XXFm6iO4TR5CrRUTcnGsU",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"jobs",
+								"MappedJobs"
+							],
+							"query": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZmQTRKYmZFdnFPTnRJVElPZFdKIiwiaWF0IjoxNjk5OTQ5NjY5LCJleHAiOjE2OTk5NTMyNjl9.N6H5Q8r8nCq7MrRz4dAll8XXFm6iO4TR5CrRUTcnGsU"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "retrive acceped jobs",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/jobs/MappedJobs?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZmQTRKYmZFdnFPTnRJVElPZFdKIiwiaWF0IjoxNjk5OTQ5NjY5LCJleHAiOjE2OTk5NTMyNjl9.N6H5Q8r8nCq7MrRz4dAll8XXFm6iO4TR5CrRUTcnGsU",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"jobs",
+								"MappedJobs"
+							],
+							"query": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZmQTRKYmZFdnFPTnRJVElPZFdKIiwiaWF0IjoxNjk5OTQ5NjY5LCJleHAiOjE2OTk5NTMyNjl9.N6H5Q8r8nCq7MrRz4dAll8XXFm6iO4TR5CrRUTcnGsU"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "retrive user role o specific job",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/jobs/retrieveUserRole?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZmQTRKYmZFdnFPTnRJVElPZFdKIiwiaWF0IjoxNzAwMTQ2NDgwLCJleHAiOjE3MDAxNTAwODB9.WIMByFWNCborYH_nMhrPGEygv5crrz3CFsTaf2YSEys&JobId=21258",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"jobs",
+								"retrieveUserRole"
+							],
+							"query": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZmQTRKYmZFdnFPTnRJVElPZFdKIiwiaWF0IjoxNzAwMTQ2NDgwLCJleHAiOjE3MDAxNTAwODB9.WIMByFWNCborYH_nMhrPGEygv5crrz3CFsTaf2YSEys"
+								},
+								{
+									"key": "JobId",
+									"value": "21258"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add Job",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "editJob",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"JobId\": 69516,\n  \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IkNOZng2SkRUTDQ4YmxHd1F6MmgxIiwiaWF0IjoxNzAwMzkzOTU3LCJleHAiOjE3MDAzOTc1NTd9.HfdVcrHYDet5pX1wpa-b4atFwT7jSSIy7v3dQn7gD60\",\n  \"inputs\": {\n    \"JobName\": \"Software Developer\",\n    \"openings\": 3,\n    \"clientName\": null,\n    \"status\": \"Hiring\",\n    \"salaryTo\": 90000,\n    \"salaryFrom\": 60000,\n    \"salaryRemark\": \"Competitive\",\n    \"mandatorySkills\": [\"Java\", \"Spring\"],\n    \"optionalSkills\": [\"React\", \"MongoDB\"],\n    \"remarks\": \"Looking for experienced developers\",\n    \"jobDescription\": \"Exciting opportunity to join our development team\"\n  }\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/jobs/edit",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"jobs",
+								"edit"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete Job",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/jobs/delete?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IkNOZng2SkRUTDQ4YmxHd1F6MmgxIiwiaWF0IjoxNzAwMzgyMzk0LCJleHAiOjE3MDAzODU5OTR9.dxxR-ToJayL7cDEJsHiVUOma9TMTuhRHN-FHJ_L8lCA&JobId=92751",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"jobs",
+								"delete"
+							],
+							"query": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IkNOZng2SkRUTDQ4YmxHd1F6MmgxIiwiaWF0IjoxNzAwMzgyMzk0LCJleHAiOjE3MDAzODU5OTR9.dxxR-ToJayL7cDEJsHiVUOma9TMTuhRHN-FHJ_L8lCA"
+								},
+								{
+									"key": "JobId",
+									"value": "92751"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "New Request",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "userAut",
+			"item": [
+				{
+					"name": "addMember",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\":\"test3@g.com\",\n    \"name\":\"test3\",\n      \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ikp1NG56d3NJMm9kaXR3ZHIwcjVNIiwiaWF0IjoxNjk5ODYxNDE2LCJleHAiOjE2OTk4NjUwMTZ9.deYslVp5EAmBSqLrGy0JERzwurIpsN5iZ7LOom5RGEs\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://test-back-end-dszgwhplxa-el.a.run.app/adduser",
+							"protocol": "https",
+							"host": [
+								"test-back-end-dszgwhplxa-el",
+								"a",
+								"run",
+								"app"
+							],
+							"path": [
+								"adduser"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "RetrieveAllUsers",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/RetrieveAllUsers?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IkNOZng2SkRUTDQ4YmxHd1F6MmgxIiwiaWF0IjoxNjk5ODYyNDY4LCJleHAiOjE2OTk4NjYwNjh9.JnXjwud3CO2n0gVPJoxMUD6guplh2yfQ7pblli-GJ_8",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"RetrieveAllUsers"
+							],
+							"query": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IkNOZng2SkRUTDQ4YmxHd1F6MmgxIiwiaWF0IjoxNjk5ODYyNDY4LCJleHAiOjE2OTk4NjYwNjh9.JnXjwud3CO2n0gVPJoxMUD6guplh2yfQ7pblli-GJ_8"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "retrive all info",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Comments",
+			"item": [
+				{
+					"name": "Add comments",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"JobId\":83153,\n    \"text\":\"first comment\",\n    \"token\":\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IkNOZng2SkRUTDQ4YmxHd1F6MmgxIiwiaWF0IjoxNzAwMjIxMjU0LCJleHAiOjE3MDAyMjQ4NTR9.whogY8x4Lr6YeqRwwCJ_-02n1ERDdbmbsIKa_NGX310\"\n\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/comment/add",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"comment",
+								"add"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get comments",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Candidates",
+			"item": [
+				{
+					"name": "add Candidates",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "filename",
+									"type": "file",
+									"src": "/home/fasil/Downloads/FASIL HAWULTIE (1).pdf"
+								},
+								{
+									"key": "Name",
+									"value": "John Doe",
+									"type": "text"
+								},
+								{
+									"key": "PhoneNumber",
+									"value": "1234567890",
+									"type": "text"
+								},
+								{
+									"key": "EmailID",
+									"value": "john.doe@example.com",
+									"type": "text"
+								},
+								{
+									"key": "TotalExperience",
+									"value": "5 years",
+									"type": "text"
+								},
+								{
+									"key": "Education",
+									"value": "Bachelor's in Computer Science",
+									"type": "text"
+								},
+								{
+									"key": "NoticePeriod",
+									"value": "1 month",
+									"type": "text"
+								},
+								{
+									"key": "CurrentLocation",
+									"value": "City, Country",
+									"type": "text"
+								},
+								{
+									"key": "Skills",
+									"value": "JavaScript,React,Node.js",
+									"type": "text"
+								},
+								{
+									"key": "CurrentCTC",
+									"value": "100000",
+									"type": "text"
+								},
+								{
+									"key": "ExpectedCTC",
+									"value": "120000",
+									"type": "text"
+								},
+								{
+									"key": "Remarks",
+									"value": "Some remarks about the candidate",
+									"type": "text"
+								},
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IlRLNnQ3elBFTW9TcjRPUlpzVFlVIiwiaWF0IjoxNzAxNjEwOTA3LCJleHAiOjE3MDE2MTQ1MDd9.pEG-PGgOGZSwDOJLIVHhDN2vndOyopqi-HVtFqVP9Ik",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:8080/upload-resume?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IlRLNnQ3elBFTW9TcjRPUlpzVFlVIiwiaWF0IjoxNzAxNjEwOTA3LCJleHAiOjE3MDE2MTQ1MDd9.pEG-PGgOGZSwDOJLIVHhDN2vndOyopqi-HVtFqVP9Ik",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"upload-resume"
+							],
+							"query": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IlRLNnQ3elBFTW9TcjRPUlpzVFlVIiwiaWF0IjoxNzAxNjEwOTA3LCJleHAiOjE3MDE2MTQ1MDd9.pEG-PGgOGZSwDOJLIVHhDN2vndOyopqi-HVtFqVP9Ik"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "retrive candidates",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://test-back-end-dszgwhplxa-el.a.run.app/get-candidates?jobId=87044&Name=a&token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IlRLNnQ3elBFTW9TcjRPUlpzVFlVIiwiaWF0IjoxNzAxNzg4NDMyLCJleHAiOjE3MDE3OTIwMzJ9.283t-Fz_MuV3LawxO_kvbZBVwlwrFjuA7NSPqHs9RTs",
+							"protocol": "https",
+							"host": [
+								"test-back-end-dszgwhplxa-el",
+								"a",
+								"run",
+								"app"
+							],
+							"path": [
+								"get-candidates"
+							],
+							"query": [
+								{
+									"key": "jobId",
+									"value": "87044"
+								},
+								{
+									"key": "Name",
+									"value": "a"
+								},
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IlRLNnQ3elBFTW9TcjRPUlpzVFlVIiwiaWF0IjoxNzAxNzg4NDMyLCJleHAiOjE3MDE3OTIwMzJ9.283t-Fz_MuV3LawxO_kvbZBVwlwrFjuA7NSPqHs9RTs"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "search-by -email",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/get-candidates-by-email/?EmailID=fasilhawultie12@gmail.com&token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IlRLNnQ3elBFTW9TcjRPUlpzVFlVIiwiaWF0IjoxNzAxODYyNTkyLCJleHAiOjE3MDE4NjYxOTJ9.CT-U6mHfWzsHu5WnQ-BRiwtL6XF6nVA2GUOPL8_Wj5Q",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"get-candidates-by-email",
+								""
+							],
+							"query": [
+								{
+									"key": "EmailID",
+									"value": "fasilhawultie12@gmail.com"
+								},
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IlRLNnQ3elBFTW9TcjRPUlpzVFlVIiwiaWF0IjoxNzAxODYyNTkyLCJleHAiOjE3MDE4NjYxOTJ9.CT-U6mHfWzsHu5WnQ-BRiwtL6XF6nVA2GUOPL8_Wj5Q"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete candidate",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						},
+						"url": {
+							"raw": "http://localhost:8080/delete-candidates?EmailId=fasilhawultie19@gmail.com&token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IlRLNnQ3elBFTW9TcjRPUlpzVFlVIiwiaWF0IjoxNzAxNzYxMzg5LCJleHAiOjE3MDE3NjQ5ODl9.BLMT8uejz1hbIpfNhJDvEpFwaNACkI8tuiMXoAcnDeQ",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"delete-candidates"
+							],
+							"query": [
+								{
+									"key": "EmailId",
+									"value": "fasilhawultie19@gmail.com"
+								},
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IlRLNnQ3elBFTW9TcjRPUlpzVFlVIiwiaWF0IjoxNzAxNzYxMzg5LCJleHAiOjE3MDE3NjQ5ODl9.BLMT8uejz1hbIpfNhJDvEpFwaNACkI8tuiMXoAcnDeQ"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "edit-candidate",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"Name\": \"John Doe\",\n  \"PhoneNumber\": \"1234567890\",\n  \"EmailID\": \"john.doe@example.com\",\n  \"TotalExperience\": \"5 years\",\n  \"Education\": \"Bachelor's Degree\",\n  \"NoticePeriod\": \"30 days\",\n  \"CurrentLocation\": \"City X\",\n  \"Skills\": [\"JavaScript\", \"React\", \"Node.js\"],\n  \"CurrentCTC\": \"100000\",\n  \"ExpectedCTC\": \"120000\",\n  \"Remarks\": \"Excellent candidate\",\n  \"status\": \"new\",\n  \"jobId\": \"87044\",\n  \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IlRLNnQ3elBFTW9TcjRPUlpzVFlVIiwiaWF0IjoxNzAxODU4OTMyLCJleHAiOjE3MDE4NjI1MzJ9.RLnJNc8lLwEcFqJqhmsG_qteFCoDRuKu8C8XKrWlbvQ\"\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/edit-candidates?email=john.doe@example.com",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"edit-candidates"
+							],
+							"query": [
+								{
+									"key": "email",
+									"value": "john.doe@example.com"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "New Request",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "clients",
+			"item": [
+				{
+					"name": "New Request",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/client/NotifyClient",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"client",
+								"NotifyClient"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "New Request",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"JobId\": \"83785\",\n  \"text\": \"This is a longer email text to test the formatting. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vel tristique elit. Duis vel neque vitae urna posuere luctus non et dui. Ut aliquam arcu sit amet ex fermentum, eu congue turpis bibendum. Integer a arcu vel lacus lacinia malesuada. Quisque auctor efficitur erat, id laoreet purus volutpat et. Proin sodales tortor nec elit tincidunt, ac bibendum felis venenatis. In hac habitasse platea dictumst. Integer in dapibus mi, vel tincidunt eros. Nulla facilisi. Sed eleifend diam non mauris interdum, id volutpat mauris feugiat. Donec at augue ut quam egestas vestibulum. Suspendisse potenti.\",\n  \"subject\": \"Test Subject\",\n  \"status\": \"All\",\n  \"sendCandidateStatus\": true\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/client/NotifyClient?status=",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"client",
+								"NotifyClient"
+							],
+							"query": [
+								{
+									"key": "status",
+									"value": ""
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "retreive all candidates",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/client/Candidates?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Imhhd3VsdGllZmFzaWxAZ21haWwuY29tIiwiaWF0IjoxNzAyMTkyNzgxLCJleHAiOjE3MDIxOTYzODF9.mis4JRkd1y6N7tiMB7pU4frssbbfXwkieOi71AdVfXQ&status=New",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"client",
+								"Candidates"
+							],
+							"query": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Imhhd3VsdGllZmFzaWxAZ21haWwuY29tIiwiaWF0IjoxNzAyMTkyNzgxLCJleHAiOjE3MDIxOTYzODF9.mis4JRkd1y6N7tiMB7pU4frssbbfXwkieOi71AdVfXQ"
+								},
+								{
+									"key": "status",
+									"value": "New"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "New Request",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\":\"hawultiefasil@gmail.com\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/client/candidatetoken",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"client",
+								"candidatetoken"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "New Request",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "token",
+			"value": ""
+		},
+		{
+			"key": "baseUrl",
+			"value": "https://postman-integration-testing.glitch.me/"
+		}
+	]
+}
